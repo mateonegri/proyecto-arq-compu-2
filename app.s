@@ -22,8 +22,6 @@
     input:
     .space 4
 
- 
-
 // Configuraciones
     .equ SNAKE_LONGITUD_MAX, 15
     .equ SNAKE_LONGITUD_MIN, 2
@@ -43,7 +41,7 @@ app:
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
 	
-	mov w3, 0xF800    		
+	mov w3, 0x001F    		
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
 //---------------- Main code --------------------
 	bl pintarFondo
@@ -66,7 +64,7 @@ loopGame:
 
 
 
-
+    b loopGame
 
 inicializarJuego:
 
@@ -80,9 +78,9 @@ inicializarJuego:
 
     mov x3, x1
     mov x4, snake_posiciones
-    str x3, [x4, 0]
+    str x3, [x4, 0]  // Lo guardo en la pos1 del array
 
-    mov x3, TABLERO_ANCHO / 2 +  6114
+    mov x3, 6119
     mov x4, manzana_posicionActual
     str x3, [x4, 0]
 
@@ -95,17 +93,17 @@ inicializarJuego:
 dibujarManzanas:
     mov w3, 0xF800
     mov x4, manzana_posicionActual
-    mov x5, 6114
+    mov x5, 6114  // numero random para aparecer la primera manzana
     add x11, x4, x5
 
-    ldr x11, [x4, 0]
+    str x11, [x4, 0]   // guardo en manzana_posicionActual el valor de la pos de la manzana actual
     
     bl rectangulo
 
     ret
 
 pintarSerpienteInicio: 
-    mov x2, 2
+    mov x2, 3
     mov w3, 0x07E0
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
@@ -153,7 +151,7 @@ dibujarCuadrados:
     cmp x8, 11   // Si el contador de cantidad de filas es 8, salteo la instruccion de sumarle 64
     beq cont1   // es decir, de bajar una fila. Si no es 8, le sumo 64 a la direccion de inicio y voy a bajar una fila
 
-    mov x12, 48288   // ( Tamaño del cuadrado - 1 * 1024 ) + ( TamBorde * 2 ) + (TamCuadrado*2)
+    mov x12, 48256   // ( Tamaño del cuadrado - 1 * 1024 ) + ( TamBorde * 2 ) + (TamCuadrado*2)
     add x13, x13, x12
     mov x12, 120
 
