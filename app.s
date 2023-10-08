@@ -48,12 +48,7 @@ app:
 
 startGame:
 
-    // Primero hay que inicializar la serpiente en el centro de la pantalla
-
     bl inicializarJuego
-
-    // La cabeza empieza en el cuadrado 50. Tengo que sumarle 1024 10 veces a el cuadrado
-    // 5 de la primer fila de cuadrados.
 
     bl pintarSerpienteInicio
 
@@ -69,7 +64,7 @@ inicializarJuego:
 
     mov w3, 0x07E0    		
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	bl pintarFondo  
+	bl test  
 
     mov x3, SNAKE_LONGITUD_MIN
     mov x4, snake_longitudActual
@@ -99,7 +94,7 @@ inicializarJuego:
 
     mov w3, 0xF800    		
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	bl pintarFondo 
+	bl test 
 
     ret
 
@@ -224,3 +219,18 @@ dibujarX:
 	cbnz x22,dibujarY	  	// Si no es la última fila, saltar
     ret
 
+test:
+
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	mov x2,512         	// Tamaño en Y
+loop6:
+	mov x1,512         	// Tamaño en X
+loop10:
+	sturh w3,[x10]	   	// Setear el color del pixel N
+	add x10,x10,2	   	// Siguiente pixel
+	sub x1,x1,1	   		// Decrementar el contador X
+	cbnz x1,loop10	   	// Si no terminó la fila, saltar
+	sub x2,x2,1	   		// Decrementar el contador Y
+	cbnz x2,loop6	  	// Si no es la última fila, saltar
+
+    ret
