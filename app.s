@@ -55,8 +55,6 @@ startGame:
     // La cabeza empieza en el cuadrado 50. Tengo que sumarle 1024 10 veces a el cuadrado
     // 5 de la primer fila de cuadrados.
 
-    add x11, x1, xzr
-
     bl pintarSerpienteInicio
 
     bl dibujarManzanas
@@ -73,9 +71,16 @@ inicializarJuego:
     mov x4, snake_longitudActual
     str x3, [x4, 0]
 
-    add x1, x10, xzr
-    mov x5, 10816
-    add x1, x1, x5 // Supuestamente en x1, tengo la pos inicial de la cabeza de la serpiente
+    
+    mov x2, 16
+    mov x1, 208
+    lsl x2, x2, 9
+    add x13, x2, x1
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    add x1, x13, xzr
+    add x1, x1, 384
 
     mov x3, x1
     mov x4, snake_posiciones
@@ -106,9 +111,10 @@ dibujarManzanas:
 pintarSerpienteInicio: 
     mov x2, 2
     mov w3, 0x07E0
+    add x11, x1, xzr
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
-    add x11, x1, xzr   // Bajo una fila para pintar la cola
+    add x11, x1, xzr   
     sub x11, x11, 96
     sub x2, x2, 1
     bne loopSerpiente
@@ -145,7 +151,6 @@ loop2:
     add x13, x2, x1
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-    add x10, x13, xzr  // guardo en x10 la direccion del primer cuadrado
 
 dibujarCuadrados:
 
