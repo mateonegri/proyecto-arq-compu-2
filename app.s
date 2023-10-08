@@ -128,8 +128,8 @@ loop2:
 
     mov w3, 0xFFFF // Cambio de color a BLANCO
     add x10, x0, 0 // X10 contiene la dirección base del framebuffer
-    mov x7, 8 // Contador cuadrados por fila
-    mov x8, 9 // Contador cantidad de filas
+    mov x7, 10 // Contador cuadrados por fila
+    mov x8, 11 // Contador cantidad de filas
     mov x9, 1 // Flag para color
 
 // Calculo direccion de inicio del primer cuadrado (x,y) = (16,16)
@@ -142,7 +142,7 @@ loop2:
     add x13, x2, x1
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-    add x10, x13, xzr // guardo en x10 la direccion del primer cuadrado
+    // add x10, x13, xzr  guardo en x10 la direccion del primer cuadrado
 
 dibujarCuadrados:
 
