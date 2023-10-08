@@ -4,33 +4,34 @@
 // variables accesibles por el nombre creo, se pueden guardar valores
 // usan el str, y traer el valor usando el ldr
 
-.section .bss
+    .section .bss
 
-.section .data
-snake_posiciones:
- .space SNAKE_LONGITUD_MAX * 4
-snake_posicionSiguiente:
- .space 4
-snake_direccionCola:
- .space 4
-snake_longitudActual:
- .space 4 
-snake_direccion:
- .space 4
-manzana_posicionActual:
- .space 4
-input:
- .space 4
+    .section .data
+    snake_posiciones:
+    .space SNAKE_LONGITUD_MAX * 4
+    snake_posicionSiguiente:
+    .space 4
+    snake_direccionCola:
+    .space 4
+    snake_longitudActual:
+    .space 4 
+    snake_direccion:
+    .space 4
+    manzana_posicionActual:
+    .space 4
+    input:
+    .space 4
 
-app:
+ 
 
-    // Configuraciones
+// Configuraciones
     .equ SNAKE_LONGITUD_MAX, 15
     .equ SNAKE_LONGITUD_MIN, 2
     .equ TABLERO_ANCHO, 10
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
 
+app:
 
 //---------------- Inicialización GPIO --------------------
 
@@ -47,6 +48,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
+startGame:
     // Primero hay que inicializar la serpiente en el centro de la pantalla
 
     bl inicializarJuego
@@ -188,7 +190,7 @@ cont:
 	b dibujarCuadradosXFila
 
 end:
-    b main
+    b startGame
 
 // funcion que le paso como parametro la direccion inicial de framebuffer en x11, y 
 // dibuja el cuadrado a partir de esa direccion. Los cuadrados son de 48x48. Cuando
