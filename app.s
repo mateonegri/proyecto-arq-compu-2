@@ -198,19 +198,17 @@ end:
 // termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
 
 rectangulo: 
-    STMFD SP!, {x1, x2, x11, w3}
-    mov x2, 48 // Tamaño en Y 
+    mov x22, 48 // Tamaño en Y 
 dibujarY:
-    mov x1, 48 // Tamaño en X
+    mov X21, 48 // Tamaño en X
 dibujarX:
     sturh w3,[x11]	   	// Setear el color del pixel N
 	add x11,x11,2	   	// Siguiente pixel
-	sub x1,x1,1	   		// Decrementar el contador X
+	sub x21,x21,1	   		// Decrementar el contador X
 	cbnz x1,dibujarX	   	// Si no terminó la fila, saltar 
     sub x11, x11, 96    // Regresar x11 al inicio de la fila
     add x11, x11, 1024  // Avanzar a la siguiente fila
-    sub x2,x2,1	   		// Decrementar el contador Y
-	cbnz x2,dibujarY	  	// Si no es la última fila, saltar
-    LDMFD SP!, {x1, x2, x11, w3}
+    sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,dibujarY	  	// Si no es la última fila, saltar
     ret
 
