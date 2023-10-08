@@ -80,7 +80,7 @@ inicializarJuego:
     mov x4, snake_posiciones
     str x3, [x4, 0]  // Lo guardo en la pos1 del array
 
-    mov x3, 6119
+    mov x3, 6119  // Ver esto!!
     mov x4, manzana_posicionActual
     str x3, [x4, 0]
 
@@ -103,13 +103,15 @@ dibujarManzanas:
     ret
 
 pintarSerpienteInicio: 
-    mov x2, 3
+    mov x2, 2
     mov w3, 0x07E0
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
-    add x11, x11, 1024   // Bajo una fila para pintar la cola
+    add x11, x1, xzr   // Bajo una fila para pintar la cola
+    sub x11, x11, 96
     sub x2, x2, 1
     bne loopSerpiente
+    
     ret
 
 pintarFondo: 
@@ -142,7 +144,7 @@ loop2:
     add x13, x2, x1
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-    // add x10, x13, xzr  guardo en x10 la direccion del primer cuadrado
+    add x10, x13, xzr  // guardo en x10 la direccion del primer cuadrado
 
 dibujarCuadrados:
 
