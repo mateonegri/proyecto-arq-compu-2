@@ -4,24 +4,6 @@
 // variables accesibles por el nombre creo, se pueden guardar valores
 // usan el str, y traer el valor usando el ldr
 
-    .section .bss
-
-    .section .data
-    snake_posiciones:
-    .space SNAKE_LONGITUD_MAX * 4
-    snake_posicionSiguiente:
-    .space 4
-    snake_direccionCola:
-    .space 4
-    snake_longitudActual:
-    .space 4 
-    snake_direccion:
-    .space 4
-    manzana_posicionActual:
-    .space 4
-    input:
-    .space 4
-
 // Configuraciones
     .equ SNAKE_LONGITUD_MAX, 15
     .equ SNAKE_LONGITUD_MIN, 2
@@ -48,7 +30,15 @@ app:
 
 startGame:
 
-    bl inicializarJuego
+    mov x2, 208
+    mov x1, 16
+    lsl x2, x2, 9
+    add x13, x2, x1
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    add x1, x13, xzr
+    add x1, x1, 384
 
     bl pintarSerpienteInicio
 
@@ -60,43 +50,6 @@ loopGame:
 
     b loopGame
 
-inicializarJuego:
-
-    mov x3, SNAKE_LONGITUD_MIN
-    mov x4, snake_longitudActual
-    str x3, [x4, 0]
-
-    mov w3, 0x07E0    		
-	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	bl test  
-
-    mov x2, 208
-    mov x1, 16
-    lsl x2, x2, 9
-    add x13, x2, x1
-    lsl x13, x13, 1
-    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-
-    add x1, x13, xzr
-    add x1, x1, 384
-
-    mov x3, x1
-    mov x4, snake_posiciones
-    str x3, [x4, 0]  // Lo guardo en la pos1 del array
-
-    mov x3, 6119  // Ver esto!!
-    mov x4, manzana_posicionActual
-    str x3, [x4, 0]
-
-    mov x3, 0        // Initial direction (right)
-    mov x4, snake_direccion
-    str x3, [x4, 0]
-
-    mov w3, 0xF800    		
-	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	bl test 
-
-    ret
 
 dibujarManzanas:
     mov w3, 0xF800
