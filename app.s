@@ -198,7 +198,7 @@ end:
 // termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
 
 rectangulo: 
-    PUSH {x1, x2, x11, w3}
+    STMFD SP!, {x1, x2, x11, w3}
     mov x2, 48 // Tamaño en Y 
 dibujarY:
     mov x1, 48 // Tamaño en X
@@ -211,6 +211,6 @@ dibujarX:
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x2,x2,1	   		// Decrementar el contador Y
 	cbnz x2,dibujarY	  	// Si no es la última fila, saltar
-    POP {x1, x2, x11, w3}
+    LDMFD SP!, {x1, x2, x11, w3}
     ret
 
