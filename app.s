@@ -67,13 +67,16 @@ loopGame:
 
 inicializarJuego:
 
+    mov w3, 0x07E0    		
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	bl pintarFondo  
+
     mov x3, SNAKE_LONGITUD_MIN
     mov x4, snake_longitudActual
     str x3, [x4, 0]
 
-    
-    mov x2, 16
-    mov x1, 208
+    mov x2, 208
+    mov x1, 16
     lsl x2, x2, 9
     add x13, x2, x1
     lsl x13, x13, 1
@@ -92,7 +95,11 @@ inicializarJuego:
 
     mov x3, 0        // Initial direction (right)
     mov x4, snake_direccion
-    str x3, [x3, 0]
+    str x3, [x4, 0]
+
+    mov w3, 0xF800    		
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	bl pintarFondo 
 
     ret
 
@@ -210,7 +217,7 @@ dibujarX:
     sturh w3,[x11]	   	// Setear el color del pixel N
 	add x11,x11,2	   	// Siguiente pixel
 	sub x21,x21,1	   		// Decrementar el contador X
-	cbnz x1,dibujarX	   	// Si no terminó la fila, saltar 
+	cbnz x21,dibujarX	   	// Si no terminó la fila, saltar 
     sub x11, x11, 96    // Regresar x11 al inicio de la fila
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
