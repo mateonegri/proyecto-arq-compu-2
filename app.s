@@ -62,13 +62,13 @@ loopGame:
 
 inicializarJuego:
 
-    mov w3, 0x07E0    		
-	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	bl test  
-
     mov x3, SNAKE_LONGITUD_MIN
     mov x4, snake_longitudActual
     str x3, [x4, 0]
+
+    mov w3, 0x07E0    		
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	bl test  
 
     mov x2, 208
     mov x1, 16
