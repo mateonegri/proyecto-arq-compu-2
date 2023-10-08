@@ -47,6 +47,7 @@ app:
 	bl pintarFondo
 
 startGame:
+
     // Primero hay que inicializar la serpiente en el centro de la pantalla
 
     bl inicializarJuego
@@ -111,7 +112,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     sub x11, x11, 96
     sub x2, x2, 1
     bne loopSerpiente
-    
+
     ret
 
 pintarFondo: 
@@ -197,6 +198,7 @@ end:
 // termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
 
 rectangulo: 
+    PUSH {x1, x2, x11, w3}
     mov x2, 48 // Tamaño en Y 
 dibujarY:
     mov x1, 48 // Tamaño en X
@@ -209,5 +211,6 @@ dibujarX:
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x2,x2,1	   		// Decrementar el contador Y
 	cbnz x2,dibujarY	  	// Si no es la última fila, saltar
+    POP {x1, x2, x11, w3}
     ret
 
