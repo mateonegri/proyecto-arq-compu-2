@@ -151,9 +151,9 @@ dibujarCuadrados:
     cmp x8, 11   // Si el contador de cantidad de filas es 8, salteo la instruccion de sumarle 64
     beq cont1   // es decir, de bajar una fila. Si no es 8, le sumo 64 a la direccion de inicio y voy a bajar una fila
 
-    mov x12, 48256   // ( Tamaño del cuadrado - 1 * 1024 ) + ( TamBorde * 2 ) + (TamCuadrado*2)
+    mov x12, 48288   // ( Tamaño del cuadrado - 1 * 1024 ) + ( TamBorde * 2 ) + (TamCuadrado*2)
     add x13, x13, x12
-    mov x12, 120
+    mov x12, 96
 
 cont1:
 
