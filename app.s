@@ -59,10 +59,10 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
+    bl pintarSerpienteInicio
+
     adrp    x9, snake_posiciones                       
     str     w1, [x9, :lo12:snake_posiciones]
-
-    bl pintarSerpienteInicio
 
     // bl dibujarManzanas
 
