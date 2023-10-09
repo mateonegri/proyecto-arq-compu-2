@@ -15,6 +15,8 @@
 
     snake_posiciones:
         .zero   60
+
+.data
     snake_posicionSiguiente:
         .word   0                               // 0x0
     snake_longitudActual:
@@ -73,9 +75,9 @@ loopGame:
 dibujarManzanas:
     mov w3, 0xF800
     adrp x4, manzana_posicionActual
-    mov w5, 6114  // numero random para aparecer la primera manzana
-    str w5, [x4, :lo12:manzana_posicionActual]
-    add x11, x4, w5
+    mov x5, 6114  // numero random para aparecer la primera manzana
+    str x5, [x4, :lo12:manzana_posicionActual]
+    add x11, x4, x5
 
     str x11, [x4, 0]   // guardo en manzana_posicionActual el valor de la pos de la manzana actual
     
