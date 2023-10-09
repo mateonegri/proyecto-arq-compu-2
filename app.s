@@ -10,22 +10,7 @@
     .equ TABLERO_ANCHO, 10
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
-
-.bss
-
-    snake_posiciones:
-        .zero   60
-
-.data
-    snake_posicionSiguiente:
-        .word   0                               // 0x0
-    snake_longitudActual:
-        .word   2                               // 0x2
-    snake_direccion:
-        .word   1                               // 0x1
-    manzana_posicionActual:
-        .word   0          
-
+       
 app:
 
 //---------------- Inicialización GPIO --------------------
@@ -43,11 +28,10 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-startGame:
+    mov x19, 0x0000000000200000  // Direccion base del array posiciones serpiente
+    mov x29, 0x0000000000400000  // Direccion base stack pointer
 
-   // sub     sp, sp, #32
-   // stp     x29, x30, [sp, #16]             // 16-byte Folded Spill
-   // add     x29, sp, #16
+startGame:
 
     mov x2, 208
     mov x1, 16
@@ -59,12 +43,11 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
+    str x1, [x19, 0]  // Guarda la pos de la cabeza en el array pos 0
+
     bl pintarSerpienteInicio
 
-    adrp    x9, snake_posiciones                       
-    str     w1, [x9, :lo12:snake_posiciones]
-
-    // bl dibujarManzanas
+    bl dibujarManzanaInicio
 
 loopGame: 
 
@@ -72,15 +55,12 @@ loopGame:
 
     b loopGame
 
-dibujarManzanas:
+dibujarManzanaInicio:
     mov w3, 0xF800
-    adrp x4, manzana_posicionActual
     mov x5, 6114  // numero random para aparecer la primera manzana
-    str x5, [x4, :lo12:manzana_posicionActual]
-    add x11, x4, x5
+    add x11, x13, x5
+    mov x9, x11  // Tengo en x9 la pos de la manzana
 
-    str x11, [x4, 0]   // guardo en manzana_posicionActual el valor de la pos de la manzana actual
-    
     bl rectangulo
 
     ret
@@ -95,6 +75,9 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     sub x11, x11, 96
     sub x2, x2, 1
     bne loopSerpiente
+
+    add x11, x11, 96
+    str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
 
     ret
 
