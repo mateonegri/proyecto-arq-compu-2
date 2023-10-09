@@ -28,7 +28,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    mov x19, 0x200000  // Direccion base del array posiciones serpiente
+    mov x19, 0x020000  // Direccion base del array posiciones serpiente
     mov x29, 0x400000  // Direccion base stack pointer
 
 startGame:
@@ -43,7 +43,7 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
-    str x1, [x19]  // Guarda la pos de la cabeza en el array pos 0
+    str x1, [x19, 0]  // Guarda la pos de la cabeza en el array pos 0
 
     bl pintarSerpienteInicio
 
