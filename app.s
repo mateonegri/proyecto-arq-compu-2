@@ -18,7 +18,7 @@ app:
 	mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.		
 	
 	// Configurar GPIO 17 como input:
-	mov X21,#0
+	mov X21, #0
 	str w21,[x20,GPIO_GPFSEL1] 		// Coloco 0 en Function Select 1 (base + 4)  
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
@@ -28,7 +28,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    mov x19, 0x020000  // Direccion base del array posiciones serpiente
+    mov x19, 0x300000  // Direccion base del array posiciones serpiente
     mov x29, 0x400000  // Direccion base stack pointer
 
 startGame:
