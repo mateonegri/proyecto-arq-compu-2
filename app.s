@@ -45,9 +45,9 @@ app:
 
 startGame:
 
-    sub     sp, sp, #32
-    stp     x29, x30, [sp, #16]             // 16-byte Folded Spill
-    add     x29, sp, #16
+   // sub     sp, sp, #32
+   // stp     x29, x30, [sp, #16]             // 16-byte Folded Spill
+   // add     x29, sp, #16
 
     mov x2, 208
     mov x1, 16
