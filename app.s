@@ -11,6 +11,19 @@
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
 
+.bss
+
+    snake_posiciones:
+        .zero   60
+    snake_posicionSiguiente:
+        .word   0                               // 0x0
+    snake_longitudActual:
+        .word   2                               // 0x2
+    snake_direccion:
+        .word   1                               // 0x1
+    manzana_posicionActual:
+        .word   0          
+
 app:
 
 //---------------- Inicialización GPIO --------------------
@@ -30,6 +43,10 @@ app:
 
 startGame:
 
+    sub     sp, sp, #32
+    stp     x29, x30, [sp, #16]             // 16-byte Folded Spill
+    add     x29, sp, #16
+
     mov x2, 208
     mov x1, 16
     lsl x2, x2, 9
@@ -40,9 +57,12 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
+    adrp    x9, snake_posiciones                       
+    str     x1, [x9, :lo12:snake_posiciones]
+
     bl pintarSerpienteInicio
 
-    bl dibujarManzanas
+    // bl dibujarManzanas
 
 loopGame: 
 
@@ -50,12 +70,12 @@ loopGame:
 
     b loopGame
 
-
 dibujarManzanas:
     mov w3, 0xF800
-    mov x4, manzana_posicionActual
-    mov x5, 6114  // numero random para aparecer la primera manzana
-    add x11, x4, x5
+    adrp x4, manzana_posicionActual
+    mov w5, 6114  // numero random para aparecer la primera manzana
+    str w5, [x4, :lo12:manzana_posicionActual]
+    add x11, x4, w5
 
     str x11, [x4, 0]   // guardo en manzana_posicionActual el valor de la pos de la manzana actual
     
