@@ -29,7 +29,7 @@ app:
 	bl pintarFondo
 
     mov x19, 0x200000  // Direccion base del array posiciones serpiente
-    mov x29, 0x400000  // Direccion base stack pointer
+    mov x31, 0x400000  // Direccion base stack pointer
 
 startGame:
 
