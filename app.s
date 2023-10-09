@@ -60,7 +60,7 @@ startGame:
     add x1, x1, 384
 
     adrp    x9, snake_posiciones                       
-    str     x1, [x9, :lo12:snake_posiciones]
+    str     w1, [x9, :lo12:snake_posiciones]
 
     bl pintarSerpienteInicio
 
@@ -209,4 +209,3 @@ loop10:
 	cbnz x2,loop6	  	// Si no es la última fila, saltar
 
     ret
-    
