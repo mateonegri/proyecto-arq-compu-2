@@ -10,7 +10,6 @@
     .equ TABLERO_ANCHO, 10
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
-    .equ BASE_POSICIONES, 0x300000
        
 app:
 
@@ -29,6 +28,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
+    mov x19, 0x300000  // Direccion base del array posiciones serpiente
     mov x29, 0x400000  // Direccion base stack pointer
 
 startGame:
@@ -43,7 +43,7 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
-    str x1, =BASE_POSICIONES  // Guarda la pos de la cabeza en el array pos 0
+    // str x1, [x19, 0]  // Guarda la pos de la cabeza en el array pos 0
 
     bl pintarSerpienteInicio
 
@@ -77,7 +77,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [=BASE_POSICIONES, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
 
     ret
 
