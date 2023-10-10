@@ -1,5 +1,7 @@
 .global app
-.extern pintarFondo
+
+.data
+    arrayBase: .dword arrayStart   // Get the array pointer value from memmap definition
 
 // variables accesibles por el nombre creo, se pueden guardar valores
 // usan el str, y traer el valor usando el ldr
@@ -28,8 +30,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    mov x19, 0x300000  // Direccion base del array posiciones serpiente
-    mov x29, 0x400000  // Direccion base stack pointer
+    ldr x19, arrayStart  // Direccion base del array posiciones serpiente
 
 startGame:
 
@@ -43,7 +44,7 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
-    // str x1, [x19, 0]  // Guarda la pos de la cabeza en el array pos 0
+    str x1, [x19, 0]  // Aca se "traba" el codigo. Deja de ejecutar
 
     bl pintarSerpienteInicio
 

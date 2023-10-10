@@ -1,3 +1,6 @@
+	.data
+        _stack_ptr: .dword _stack_end   // Get the stack pointer value from memmap definition
+	
 	.text
 	.org 0x0000
 
@@ -24,7 +27,8 @@
 	.equ GPIO_GPLEV0, 	0x34    	// GPIO Pin Level 0 o los niveles de los pines inferiores (0-31)
 	
 		
-
+	ldr     x1, _stack_ptr   // Load stack pointer to X1
+    mov     sp, x1          // Move stack pointer to the sp register
 
 // Return CPU ID (0..3) Of The CPU Executed On
 	mrs x0,MPIDR_EL1 // X0 = Multiprocessor Affinity Register (MPIDR)
