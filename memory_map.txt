@@ -9,28 +9,28 @@ Linker script and memory map
 
 LOAD main.o
 
-.text           0x0000000000000000    0x10380
+.text           0x0000000000000000    0x103b8
  *(.text*)
- .text          0x0000000000000000    0x10380 main.o
+ .text          0x0000000000000000    0x103b8 main.o
                 0x00000000000100a0                inputRead
                 0x00000000000100bc                app
 
-.iplt           0x0000000000010380        0x0
- .iplt          0x0000000000010380        0x0 main.o
+.iplt           0x00000000000103b8        0x0
+ .iplt          0x00000000000103b8        0x0 main.o
 
-.rela.dyn       0x0000000000010380        0x0
- .rela.iplt     0x0000000000010380        0x0 main.o
- .rela.data     0x0000000000010380        0x0 main.o
+.rela.dyn       0x00000000000103b8        0x0
+ .rela.iplt     0x00000000000103b8        0x0 main.o
+ .rela.data     0x00000000000103b8        0x0 main.o
 
-.data           0x0000000000010380       0x10
- .data          0x0000000000010380       0x10 main.o
+.data           0x00000000000103b8       0x10
+ .data          0x00000000000103b8       0x10 main.o
 
-.igot.plt       0x0000000000010390        0x0
- .igot.plt      0x0000000000010390        0x0 main.o
+.igot.plt       0x00000000000103c8        0x0
+ .igot.plt      0x00000000000103c8        0x0 main.o
 
-.bss            0x0000000000010390        0x0
+.bss            0x00000000000103c8        0x0
  *(.bss*)
- .bss           0x0000000000010390        0x0 main.o
+ .bss           0x00000000000103c8        0x0 main.o
                 0x0000000000400000                _stack_end = 0x400000
                 0x0000000000200000                _array_start = 0x200000
 OUTPUT(main.elf elf64-littleaarch64)
