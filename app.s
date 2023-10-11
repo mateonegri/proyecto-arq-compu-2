@@ -283,7 +283,9 @@ desplazarPosicion:
     ldr x13, [x19, x16] // x13 = snake_posiciones[i]
     add x16, x16, 8
     ldr x17, [x19, x16] // x17 = snake_posiciones[i+1]
-    str x13, [x19, x16] // snake_posiciones[i+1] = snake_posiciones[i]
+    sub x16, x16, 8
+    str x17, [x19, x16] // snake_posiciones[i+1] = snake_posiciones[i]
+    add x16, x16, 8
 
         cmp x18, 0
         beq movDerecha
@@ -309,7 +311,6 @@ forCont:
         add x13, x13, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
         str x13, [x19, 0]
         b continuar
-
 
     movIzquierda:
         sub x13, x13, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
