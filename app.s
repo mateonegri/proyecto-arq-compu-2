@@ -31,7 +31,7 @@ app:
 
 startGame:
 
-    mov x19, 0x20000
+    mov x19, 0x200000
     mov x2, 208
     mov x1, 16
     lsl x2, x2, 9
@@ -42,9 +42,9 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
-    // str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
+    str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
 
-   bl pintarSerpienteInicio
+    bl pintarSerpienteInicio
 
    // bl dibujarManzanaInicio
 
@@ -54,6 +54,14 @@ loopGame:
 
    bl actualizarDireccion
 
+   cmp x18, 1
+   beq test
+   cmp x18, 2
+   beq test
+   cmp x18, 3
+   beq test
+
+   anda:
 
    b loopGame
 
@@ -77,7 +85,8 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bl rectangulo
     add x11, x1, xzr   
     sub x11, x11, 96
-    sub x2, x2, 1
+    subs x2, x2, 1
+    cmp x2, 0
     bne loopSerpiente
 
     add x11, x11, 96
@@ -209,47 +218,36 @@ return:
 izquierda:
     mov x18, 1
 
-    mov w3, 0xFFFF
-    // bl test
-
     b return
 
 arriba:
     mov x18, 2
-
-    mov w3, 0xFFFF
-    // bl test
 
     b return
 
 abajo:
     mov x18, 3
 
-    mov w3, 0xFFFF
-    // bl test
-
     b return
 
 derecha:
     mov x18, 0
 
-    mov w3, 0xFFFF
-    // bl test
-
     b return
 
 
 test:
+
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	mov x2,512         	// Tamaño en Y
+	mov x22,512         	// Tamaño en Y
 loop6:
-	mov x1,512         	// Tamaño en X
+	mov x21,512         	// Tamaño en X
 loop10:
 	sturh w3,[x10]	   	// Setear el color del pixel N
 	add x10,x10,2	   	// Siguiente pixel
-	sub x1,x1,1	   		// Decrementar el contador X
-	cbnz x1,loop10	   	// Si no terminó la fila, saltar
-	sub x2,x2,1	   		// Decrementar el contador Y
-	cbnz x2,loop6	  	// Si no es la última fila, saltar
+	sub x21,x21,1	   		// Decrementar el contador X
+	cbnz x21,loop10	   	// Si no terminó la fila, saltar
+	sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,loop6	  	// Si no es la última fila, saltar
 
-    ret
+    b anda

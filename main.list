@@ -5,8 +5,8 @@ main.elf:     file format elf64-littleaarch64
 Disassembly of section .text:
 
 0000000000000000 <FB_Init-0x18>:
-       0:	58081593 	ldr	x19, 102b0 <_array_ptr>
-       4:	58081521 	ldr	x1, 102a8 <_stack_ptr>
+       0:	58081693 	ldr	x19, 102d0 <_array_ptr>
+       4:	58081621 	ldr	x1, 102c8 <_stack_ptr>
        8:	9100003f 	mov	sp, x1
        c:	d53800a0 	mrs	x0, mpidr_el1
       10:	f2400400 	ands	x0, x0, #0x3
@@ -16458,10 +16458,10 @@ Disassembly of section .text:
    100c0:	b9000695 	str	w21, [x20, #4]
    100c4:	528003e3 	mov	w3, #0x1f                  	// #31
    100c8:	9100000a 	add	x10, x0, #0x0
-   100cc:	94000020 	bl	1014c <pintarFondo>
-   100d0:	d2a00053 	mov	x19, #0x20000               	// #131072
+   100cc:	94000029 	bl	10170 <pintarFondo>
 
-00000000000100d4 <startGame>:
+00000000000100d0 <startGame>:
+   100d0:	d2a00413 	mov	x19, #0x200000              	// #2097152
    100d4:	d2801a02 	mov	x2, #0xd0                  	// #208
    100d8:	d2800201 	mov	x1, #0x10                  	// #16
    100dc:	d377d842 	lsl	x2, x2, #9
@@ -16471,171 +16471,183 @@ Disassembly of section .text:
    100ec:	8b1f01a1 	add	x1, x13, xzr
    100f0:	91060021 	add	x1, x1, #0x180
    100f4:	f9000261 	str	x1, [x19]
-   100f8:	9400000a 	bl	10120 <pintarSerpienteInicio>
+   100f8:	94000010 	bl	10138 <pintarSerpienteInicio>
    100fc:	d2800012 	mov	x18, #0x0                   	// #0
 
 0000000000010100 <loopGame>:
-   10100:	9400004b 	bl	1022c <actualizarDireccion>
-   10104:	17ffffff 	b	10100 <loopGame>
+   10100:	94000054 	bl	10250 <actualizarDireccion>
+   10104:	f100065f 	cmp	x18, #0x1
+   10108:	54000cc0 	b.eq	102a0 <test>  // b.none
+   1010c:	f1000a5f 	cmp	x18, #0x2
+   10110:	54000c80 	b.eq	102a0 <test>  // b.none
+   10114:	f1000e5f 	cmp	x18, #0x3
+   10118:	54000c40 	b.eq	102a0 <test>  // b.none
 
-0000000000010108 <dibujarManzanaInicio>:
-   10108:	529f0003 	mov	w3, #0xf800                	// #63488
-   1010c:	d282fc45 	mov	x5, #0x17e2                	// #6114
-   10110:	8b05014b 	add	x11, x10, x5
-   10114:	aa0b03e9 	mov	x9, x11
-   10118:	9400003a 	bl	10200 <rectangulo>
-   1011c:	d65f03c0 	ret
+000000000001011c <anda>:
+   1011c:	17fffff9 	b	10100 <loopGame>
 
-0000000000010120 <pintarSerpienteInicio>:
-   10120:	d2800042 	mov	x2, #0x2                   	// #2
-   10124:	5280fc03 	mov	w3, #0x7e0                 	// #2016
-   10128:	8b1f002b 	add	x11, x1, xzr
+0000000000010120 <dibujarManzanaInicio>:
+   10120:	529f0003 	mov	w3, #0xf800                	// #63488
+   10124:	d282fc45 	mov	x5, #0x17e2                	// #6114
+   10128:	8b05014b 	add	x11, x10, x5
+   1012c:	aa0b03e9 	mov	x9, x11
+   10130:	9400003d 	bl	10224 <rectangulo>
+   10134:	d65f03c0 	ret
 
-000000000001012c <loopSerpiente>:
-   1012c:	94000035 	bl	10200 <rectangulo>
-   10130:	8b1f002b 	add	x11, x1, xzr
-   10134:	d101816b 	sub	x11, x11, #0x60
-   10138:	d1000442 	sub	x2, x2, #0x1
-   1013c:	54ffff81 	b.ne	1012c <loopSerpiente>  // b.any
-   10140:	9101816b 	add	x11, x11, #0x60
-   10144:	f900066b 	str	x11, [x19, #8]
-   10148:	d65f03c0 	ret
+0000000000010138 <pintarSerpienteInicio>:
+   10138:	f81f8ffe 	str	x30, [sp, #-8]!
+   1013c:	d2800042 	mov	x2, #0x2                   	// #2
+   10140:	5280fc03 	mov	w3, #0x7e0                 	// #2016
+   10144:	8b1f002b 	add	x11, x1, xzr
 
-000000000001014c <pintarFondo>:
-   1014c:	d2804016 	mov	x22, #0x200                 	// #512
+0000000000010148 <loopSerpiente>:
+   10148:	94000037 	bl	10224 <rectangulo>
+   1014c:	8b1f002b 	add	x11, x1, xzr
+   10150:	d101816b 	sub	x11, x11, #0x60
+   10154:	f1000442 	subs	x2, x2, #0x1
+   10158:	f100005f 	cmp	x2, #0x0
+   1015c:	54ffff61 	b.ne	10148 <loopSerpiente>  // b.any
+   10160:	9101816b 	add	x11, x11, #0x60
+   10164:	f900066b 	str	x11, [x19, #8]
+   10168:	f84087fe 	ldr	x30, [sp], #8
+   1016c:	d65f03c0 	ret
 
-0000000000010150 <loop1>:
-   10150:	d2804015 	mov	x21, #0x200                 	// #512
+0000000000010170 <pintarFondo>:
+   10170:	d2804016 	mov	x22, #0x200                 	// #512
 
-0000000000010154 <loop2>:
-   10154:	78000143 	sturh	w3, [x10]
-   10158:	9100094a 	add	x10, x10, #0x2
-   1015c:	d10006b5 	sub	x21, x21, #0x1
-   10160:	b5ffffb5 	cbnz	x21, 10154 <loop2>
-   10164:	d10006d6 	sub	x22, x22, #0x1
-   10168:	b5ffff56 	cbnz	x22, 10150 <loop1>
-   1016c:	529fffe3 	mov	w3, #0xffff                	// #65535
-   10170:	9100000a 	add	x10, x0, #0x0
-   10174:	d2800147 	mov	x7, #0xa                   	// #10
-   10178:	d2800168 	mov	x8, #0xb                   	// #11
-   1017c:	d2800029 	mov	x9, #0x1                   	// #1
-   10180:	d2800c0c 	mov	x12, #0x60                  	// #96
-   10184:	d2800216 	mov	x22, #0x10                  	// #16
-   10188:	d2800215 	mov	x21, #0x10                  	// #16
-   1018c:	d377dad6 	lsl	x22, x22, #9
-   10190:	8b1502cd 	add	x13, x22, x21
-   10194:	d37ff9ad 	lsl	x13, x13, #1
-   10198:	8b0a01ad 	add	x13, x13, x10
+0000000000010174 <loop1>:
+   10174:	d2804015 	mov	x21, #0x200                 	// #512
 
-000000000001019c <dibujarCuadrados>:
-   1019c:	d2800147 	mov	x7, #0xa                   	// #10
-   101a0:	f1002d1f 	cmp	x8, #0xb
-   101a4:	54000080 	b.eq	101b4 <cont1>  // b.none
-   101a8:	d297940c 	mov	x12, #0xbca0                	// #48288
-   101ac:	8b0c01ad 	add	x13, x13, x12
-   101b0:	d2800c0c 	mov	x12, #0x60                  	// #96
+0000000000010178 <loop2>:
+   10178:	78000143 	sturh	w3, [x10]
+   1017c:	9100094a 	add	x10, x10, #0x2
+   10180:	d10006b5 	sub	x21, x21, #0x1
+   10184:	b5ffffb5 	cbnz	x21, 10178 <loop2>
+   10188:	d10006d6 	sub	x22, x22, #0x1
+   1018c:	b5ffff56 	cbnz	x22, 10174 <loop1>
+   10190:	529fffe3 	mov	w3, #0xffff                	// #65535
+   10194:	9100000a 	add	x10, x0, #0x0
+   10198:	d2800147 	mov	x7, #0xa                   	// #10
+   1019c:	d2800168 	mov	x8, #0xb                   	// #11
+   101a0:	d2800029 	mov	x9, #0x1                   	// #1
+   101a4:	d2800c0c 	mov	x12, #0x60                  	// #96
+   101a8:	d2800216 	mov	x22, #0x10                  	// #16
+   101ac:	d2800215 	mov	x21, #0x10                  	// #16
+   101b0:	d377dad6 	lsl	x22, x22, #9
+   101b4:	8b1502cd 	add	x13, x22, x21
+   101b8:	d37ff9ad 	lsl	x13, x13, #1
+   101bc:	8b0a01ad 	add	x13, x13, x10
 
-00000000000101b4 <cont1>:
-   101b4:	d1000508 	sub	x8, x8, #0x1
-   101b8:	b4000228 	cbz	x8, 101fc <end>
+00000000000101c0 <dibujarCuadrados>:
+   101c0:	d2800147 	mov	x7, #0xa                   	// #10
+   101c4:	f1002d1f 	cmp	x8, #0xb
+   101c8:	54000080 	b.eq	101d8 <cont1>  // b.none
+   101cc:	d297940c 	mov	x12, #0xbca0                	// #48288
+   101d0:	8b0c01ad 	add	x13, x13, x12
+   101d4:	d2800c0c 	mov	x12, #0x60                  	// #96
 
-00000000000101bc <dibujarCuadradosXFila>:
-   101bc:	f10028ff 	cmp	x7, #0xa
-   101c0:	54000040 	b.eq	101c8 <cont>  // b.none
-   101c4:	8b0c01ad 	add	x13, x13, x12
+00000000000101d8 <cont1>:
+   101d8:	d1000508 	sub	x8, x8, #0x1
+   101dc:	b4000228 	cbz	x8, 10220 <end>
 
-00000000000101c8 <cont>:
-   101c8:	910001ab 	add	x11, x13, #0x0
-   101cc:	9400000d 	bl	10200 <rectangulo>
-   101d0:	d10004e7 	sub	x7, x7, #0x1
-   101d4:	b4fffe47 	cbz	x7, 1019c <dibujarCuadrados>
-   101d8:	f100053f 	cmp	x9, #0x1
-   101dc:	54000040 	b.eq	101e4 <cambiarColorNegro>  // b.none
-   101e0:	54000081 	b.ne	101f0 <cambiarColorBlanco>  // b.any
+00000000000101e0 <dibujarCuadradosXFila>:
+   101e0:	f10028ff 	cmp	x7, #0xa
+   101e4:	54000040 	b.eq	101ec <cont>  // b.none
+   101e8:	8b0c01ad 	add	x13, x13, x12
 
-00000000000101e4 <cambiarColorNegro>:
-   101e4:	52800003 	mov	w3, #0x0                   	// #0
-   101e8:	d2800009 	mov	x9, #0x0                   	// #0
-   101ec:	17fffff4 	b	101bc <dibujarCuadradosXFila>
+00000000000101ec <cont>:
+   101ec:	910001ab 	add	x11, x13, #0x0
+   101f0:	9400000d 	bl	10224 <rectangulo>
+   101f4:	d10004e7 	sub	x7, x7, #0x1
+   101f8:	b4fffe47 	cbz	x7, 101c0 <dibujarCuadrados>
+   101fc:	f100053f 	cmp	x9, #0x1
+   10200:	54000040 	b.eq	10208 <cambiarColorNegro>  // b.none
+   10204:	54000081 	b.ne	10214 <cambiarColorBlanco>  // b.any
 
-00000000000101f0 <cambiarColorBlanco>:
-   101f0:	529fffe3 	mov	w3, #0xffff                	// #65535
-   101f4:	d2800029 	mov	x9, #0x1                   	// #1
-   101f8:	17fffff1 	b	101bc <dibujarCuadradosXFila>
+0000000000010208 <cambiarColorNegro>:
+   10208:	52800003 	mov	w3, #0x0                   	// #0
+   1020c:	d2800009 	mov	x9, #0x0                   	// #0
+   10210:	17fffff4 	b	101e0 <dibujarCuadradosXFila>
 
-00000000000101fc <end>:
-   101fc:	17ffffb6 	b	100d4 <startGame>
+0000000000010214 <cambiarColorBlanco>:
+   10214:	529fffe3 	mov	w3, #0xffff                	// #65535
+   10218:	d2800029 	mov	x9, #0x1                   	// #1
+   1021c:	17fffff1 	b	101e0 <dibujarCuadradosXFila>
 
-0000000000010200 <rectangulo>:
-   10200:	d2800616 	mov	x22, #0x30                  	// #48
+0000000000010220 <end>:
+   10220:	17ffffac 	b	100d0 <startGame>
 
-0000000000010204 <dibujarY>:
-   10204:	d2800615 	mov	x21, #0x30                  	// #48
+0000000000010224 <rectangulo>:
+   10224:	d2800616 	mov	x22, #0x30                  	// #48
 
-0000000000010208 <dibujarX>:
-   10208:	78000163 	sturh	w3, [x11]
-   1020c:	9100096b 	add	x11, x11, #0x2
-   10210:	d10006b5 	sub	x21, x21, #0x1
-   10214:	b5ffffb5 	cbnz	x21, 10208 <dibujarX>
-   10218:	d101816b 	sub	x11, x11, #0x60
-   1021c:	9110016b 	add	x11, x11, #0x400
-   10220:	d10006d6 	sub	x22, x22, #0x1
-   10224:	b5ffff16 	cbnz	x22, 10204 <dibujarY>
-   10228:	d65f03c0 	ret
+0000000000010228 <dibujarY>:
+   10228:	d2800615 	mov	x21, #0x30                  	// #48
 
-000000000001022c <actualizarDireccion>:
-   1022c:	d140207c 	sub	x28, x3, #0x8, lsl #12
-   10230:	b400023c 	cbz	x28, 10274 <derecha>
-   10234:	d14102fc 	sub	x28, x23, #0x40, lsl #12
-   10238:	b40000dc 	cbz	x28, 10250 <izquierda>
-   1023c:	d14082bc 	sub	x28, x21, #0x20, lsl #12
-   10240:	b400015c 	cbz	x28, 10268 <abajo>
-   10244:	d14012dc 	sub	x28, x22, #0x4, lsl #12
-   10248:	b40000bc 	cbz	x28, 1025c <arriba>
+000000000001022c <dibujarX>:
+   1022c:	78000163 	sturh	w3, [x11]
+   10230:	9100096b 	add	x11, x11, #0x2
+   10234:	d10006b5 	sub	x21, x21, #0x1
+   10238:	b5ffffb5 	cbnz	x21, 1022c <dibujarX>
+   1023c:	d101816b 	sub	x11, x11, #0x60
+   10240:	9110016b 	add	x11, x11, #0x400
+   10244:	d10006d6 	sub	x22, x22, #0x1
+   10248:	b5ffff16 	cbnz	x22, 10228 <dibujarY>
    1024c:	d65f03c0 	ret
 
-0000000000010250 <izquierda>:
-   10250:	d2800032 	mov	x18, #0x1                   	// #1
-   10254:	529fffe3 	mov	w3, #0xffff                	// #65535
-   10258:	d65f03c0 	ret
+0000000000010250 <actualizarDireccion>:
+   10250:	f81f8ffe 	str	x30, [sp, #-8]!
+   10254:	97ffff93 	bl	100a0 <inputRead>
+   10258:	d140207c 	sub	x28, x3, #0x8, lsl #12
+   1025c:	b40001fc 	cbz	x28, 10298 <derecha>
+   10260:	d14102fc 	sub	x28, x23, #0x40, lsl #12
+   10264:	b40000fc 	cbz	x28, 10280 <izquierda>
+   10268:	d14082bc 	sub	x28, x21, #0x20, lsl #12
+   1026c:	b400013c 	cbz	x28, 10290 <abajo>
+   10270:	d14012dc 	sub	x28, x22, #0x4, lsl #12
+   10274:	b40000bc 	cbz	x28, 10288 <arriba>
 
-000000000001025c <arriba>:
-   1025c:	d2800052 	mov	x18, #0x2                   	// #2
-   10260:	529fffe3 	mov	w3, #0xffff                	// #65535
-   10264:	d65f03c0 	ret
-
-0000000000010268 <abajo>:
-   10268:	d2800072 	mov	x18, #0x3                   	// #3
-   1026c:	529fffe3 	mov	w3, #0xffff                	// #65535
-   10270:	d65f03c0 	ret
-
-0000000000010274 <derecha>:
-   10274:	d2800012 	mov	x18, #0x0                   	// #0
-   10278:	529fffe3 	mov	w3, #0xffff                	// #65535
+0000000000010278 <return>:
+   10278:	f84087fe 	ldr	x30, [sp], #8
    1027c:	d65f03c0 	ret
 
-0000000000010280 <test>:
-   10280:	9100000a 	add	x10, x0, #0x0
-   10284:	d2804002 	mov	x2, #0x200                 	// #512
+0000000000010280 <izquierda>:
+   10280:	d2800032 	mov	x18, #0x1                   	// #1
+   10284:	17fffffd 	b	10278 <return>
 
-0000000000010288 <loop6>:
-   10288:	d2804001 	mov	x1, #0x200                 	// #512
+0000000000010288 <arriba>:
+   10288:	d2800052 	mov	x18, #0x2                   	// #2
+   1028c:	17fffffb 	b	10278 <return>
 
-000000000001028c <loop10>:
-   1028c:	78000143 	sturh	w3, [x10]
-   10290:	9100094a 	add	x10, x10, #0x2
-   10294:	d1000421 	sub	x1, x1, #0x1
-   10298:	b5ffffa1 	cbnz	x1, 1028c <loop10>
-   1029c:	d1000442 	sub	x2, x2, #0x1
-   102a0:	b5ffff42 	cbnz	x2, 10288 <loop6>
-   102a4:	d65f03c0 	ret
+0000000000010290 <abajo>:
+   10290:	d2800072 	mov	x18, #0x3                   	// #3
+   10294:	17fffff9 	b	10278 <return>
+
+0000000000010298 <derecha>:
+   10298:	d2800012 	mov	x18, #0x0                   	// #0
+   1029c:	17fffff7 	b	10278 <return>
+
+00000000000102a0 <test>:
+   102a0:	9100000a 	add	x10, x0, #0x0
+   102a4:	d2804016 	mov	x22, #0x200                 	// #512
+
+00000000000102a8 <loop6>:
+   102a8:	d2804015 	mov	x21, #0x200                 	// #512
+
+00000000000102ac <loop10>:
+   102ac:	78000143 	sturh	w3, [x10]
+   102b0:	9100094a 	add	x10, x10, #0x2
+   102b4:	d10006b5 	sub	x21, x21, #0x1
+   102b8:	b5ffffb5 	cbnz	x21, 102ac <loop10>
+   102bc:	d10006d6 	sub	x22, x22, #0x1
+   102c0:	b5ffff56 	cbnz	x22, 102a8 <loop6>
+   102c4:	17ffff96 	b	1011c <anda>
 
 Disassembly of section .data:
 
-00000000000102a8 <_stack_ptr>:
-   102a8:	00400000 	.inst	0x00400000 ; undefined
-   102ac:	00000000 	udf	#0
+00000000000102c8 <_stack_ptr>:
+   102c8:	00400000 	.inst	0x00400000 ; undefined
+   102cc:	00000000 	udf	#0
 
-00000000000102b0 <_array_ptr>:
-   102b0:	00020000 	.inst	0x00020000 ; undefined
-   102b4:	00000000 	udf	#0
+00000000000102d0 <_array_ptr>:
+   102d0:	00200000 	.inst	0x00200000 ; NYI
+   102d4:	00000000 	udf	#0

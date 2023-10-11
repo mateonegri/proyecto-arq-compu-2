@@ -4,6 +4,7 @@
 //------FIN DEFINICION DE FUNCIONES-------//
 
 inputRead: 	
+	mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.	
 	ldr w22, [x20, GPIO_GPLEV0] 	// Leo el registro GPIO Pin Level 0 y lo guardo en X22
 	and X23,X22,0x40000
 	and X21,X22,0x20000
