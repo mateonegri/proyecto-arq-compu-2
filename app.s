@@ -83,16 +83,16 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     ret
 
 pintarFondo: 
-	mov x2,512         	// Tamaño en Y 
+	mov x22,512         	// Tamaño en Y 
 loop1:
-	mov x1,512         	// Tamaño en X 
+	mov x21,512         	// Tamaño en X 
 loop2:
 	sturh w3,[x10]	   	// Setear el color del pixel N
 	add x10,x10,2	   	// Siguiente pixel
-	sub x1,x1,1	   		// Decrementar el contador X
-	cbnz x1,loop2	   	// Si no terminó la fila, saltar
-	sub x2,x2,1	   		// Decrementar el contador Y
-	cbnz x2,loop1	  	// Si no es la última fila, saltar
+	sub x21,x21,1	   		// Decrementar el contador X
+	cbnz x21,loop2	   	// Si no terminó la fila, saltar
+	sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,loop1	  	// Si no es la última fila, saltar
 
 // Ya pinte toda la pantalla de un color, ahora cambio la direccion base, para ir pintando los cuadrados. 
 
@@ -106,10 +106,10 @@ loop2:
 
     mov x12, 96 // Lo que le tengo que sumar al framebuffer cada vez que termino un cuadrado de una fila  
 
-    mov x2, 16
-    mov x1, 16
-    lsl x2, x2, 9
-    add x13, x2, x1
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
@@ -182,26 +182,16 @@ actualizarDireccion:
     // Lectura de puertos de entrada y devuelvo direccion 
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
-    mov w20, PERIPHERAL_BASE + GPIO_BASE             // Move 0 into register 
-    ldr w21, [x20, GPIO_GPLEV0]  // Load the value at memory location [x0 + GPLEV0] into register x1
-  
-    and x3, x21, 0x40000    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
-    cmp x3, #1              // Compare the result with 1
-    beq izquierda               // Branch to 'case1' if the result is equal to 1
+    bl inputRead
 
-    // If bit 15 is not set, check other bits
-    
-    and x3, x21, 0x04000    // Check bit 14 for GPIO 18
-    cmp x3, #1              // Compare the result with 1
-    beq arriba               // Branch to 'case2' if the result is equal to 1
-   
-    and x3, x21, 0x20000   // Check bit 18 for GPIO 18
-    cmp x3, #1              // Compare the result with 1
-    beq abajo               // Branch to 'case3' if the result is equal to 1
-
-    and x3, x21, 0x08000    // Check bit 17 for GPIO 18
-    cmp x3, #1              // Compare the result with 1
-    beq derecha               // Branch to 'case4' if the result is equal to 1
+    sub x28, x3, RIGHT
+    cbz x28, derecha
+    sub x28, x23, LEFT
+    cbz x28, izquierda
+    sub x28, X21, DOWN
+    cbz x28, abajo
+    sub x28, x22, UP
+    cbz x28, arriba
 
     ret
 
