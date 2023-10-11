@@ -44,9 +44,11 @@ startGame:
 
    // bl dibujarManzanaInicio
 
+   mov x18, 0
+
 loopGame: 
 
-
+    bl actualizarDireccion
 
     b loopGame
 
@@ -171,6 +173,67 @@ dibujarX:
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarY	  	// Si no es la última fila, saltar
     ret
+
+actualizarDireccion:   
+    // Lectura de puertos de entrada y devuelvo direccion 
+    // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
+
+    mov x20, xzr             // Move 0 into register x0
+    ldr x21, [x20, #GPLEV15]   // Load the value at memory location [x0 + GPLEV0] into register x1
+    and x21, x21, #1 << 15    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
+    cmp x21, #1              // Compare the result with 1
+    beq izquierda               // Branch to 'case1' if the result is equal to 1
+
+    // If bit 15 is not set, check other bits
+    ldr x21, [x20, #GPLEV14]   // Load the value at memory location [x0 + GPLEV0] into register x1
+    and x21, x21, #1 << 14    // Check bit 14 for GPIO 18
+    cmp x21, #1              // Compare the result with 1
+    beq arriba               // Branch to 'case2' if the result is equal to 1
+
+    ldr x21, [x20, #GPLEV18]   // Load the value at memory location [x0 + GPLEV0] into register x1
+    and x21, x21, #1 << 18    // Check bit 18 for GPIO 18
+    cmp x21, #1              // Compare the result with 1
+    beq abajo               // Branch to 'case3' if the result is equal to 1
+
+    ldr x21, [x20, #GPLEV17]   // Load the value at memory location [x0 + GPLEV0] into register x1
+    and x21, x21, #1 << 17    // Check bit 17 for GPIO 18
+    cmp x21, #1              // Compare the result with 1
+    beq derecha               // Branch to 'case4' if the result is equal to 1
+
+    ret
+
+izquierda:
+    mov x18, 1
+
+    mov w3, 0xFFFF
+    bl test
+
+    ret
+
+arriba:
+    mov x18, 2
+
+    mov w3, 0xFFFF
+    bl test
+
+    ret
+
+abajo:
+    mov x18, 3
+
+    mov w3, 0xFFFF
+    bl test
+
+    ret
+
+derecha:
+    mov x18, 0
+
+    mov w3, 0xFFFF
+    bl test
+
+    ret
+
 
 test:
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
