@@ -63,7 +63,20 @@ loopGame:
 
    anda:
 
+   bl desplazarPosicion
+
+   bl pintarSerpiente
+
+   bl delay
+
    b loopGame
+
+
+
+
+
+
+
 
 dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
@@ -91,6 +104,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
 
     add x11, x11, 96
     str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    mov x2, 2
 
     ldr x30, [sp], 8
     
@@ -251,3 +265,76 @@ loop10:
 	cbnz x22,loop6	  	// Si no es la última fila, saltar
 
     b anda
+
+desplazarPosicion:
+
+    str x30, [sp, #-8]!
+
+    mov x15, x2
+    mov x16, 0
+
+    for:
+    cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
+    beq cont1
+
+    // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i+1];
+    ldr x13, [x19, x16] // x13 = snake_posiciones[i]
+    add x16, x16, 8
+    ldr x17, [x19, x16] // x17 = snake_posiciones[i+1]
+    str x13, [x19, x16] // snake_posiciones[i+1] = snake_posiciones[i]
+
+        cmp x18, 0
+        beq movDerecha
+        cmp x18, 1
+        beq movIzquierda
+        cmp x18, 2
+        beq movArriba
+        cmp x18, 3
+        beq mov abajo
+
+continuar:
+
+    sub x15, x15, 1
+
+    b for 
+cont1:
+    ldr x30, [sp], 8
+
+    ret
+
+
+    movDerecha:
+        add x13, x13, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
+        str x13, [x19, 0]
+        b continuar
+
+
+    movIzquierda:
+        sub x13, x13, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
+        str x13, [x19, 0]
+        b continuar
+
+     movArriba:
+        sub x13, x13, 48288  // Muevo la pos de la cabeza para arriba y la guardo en el array
+        str x13, [x19, 0]
+        b continuar
+    
+     movAbajo:
+        add x13, x13, 48288  // Muevo la pos de la cabeza para abajo y la guardo en el array
+        str x13, [x19, 0]
+        b continuar
+
+
+pintarSerpiente:
+    mov x15, x2
+
+
+
+
+delay:
+    mov x21, 256000
+    sub x21, x21, 1
+    cmp x21, 0
+    bne delay
+    
+    ret
