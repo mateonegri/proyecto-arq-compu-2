@@ -42,7 +42,7 @@ startGame:
     add x1, x13, xzr
     add x1, x1, 384
 
-    // str x1, [x19, 0]  // Aca se "traba" el codigo. Deja de ejecutar
+    // str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
 
    bl pintarSerpienteInicio
 
@@ -68,6 +68,8 @@ dibujarManzanaInicio:  // Esto anda mal
     ret
 
 pintarSerpienteInicio: 
+    str x30, [sp, #-8]!
+
     mov x2, 2
     mov w3, 0x07E0
     add x11, x1, xzr
@@ -81,6 +83,8 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     add x11, x11, 96
     str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
 
+    ldr x30, [sp], 8
+    
     ret
 
 pintarFondo: 
