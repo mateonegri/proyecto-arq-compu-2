@@ -199,7 +199,7 @@ izquierda:
     mov x18, 1
 
     mov w3, 0xFFFF
-    bl test
+    // bl test
 
     ret
 
@@ -207,7 +207,7 @@ arriba:
     mov x18, 2
 
     mov w3, 0xFFFF
-    bl test
+    // bl test
 
     ret
 
@@ -215,7 +215,7 @@ abajo:
     mov x18, 3
 
     mov w3, 0xFFFF
-    bl test
+    // bl test
 
     ret
 
@@ -223,7 +223,7 @@ derecha:
     mov x18, 0
 
     mov w3, 0xFFFF
-    bl test
+    // bl test
 
     ret
 
