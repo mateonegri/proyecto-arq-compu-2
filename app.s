@@ -180,7 +180,9 @@ actualizarDireccion:
 
     mov w20, PERIPHERAL_BASE + GPIO_BASE             // Move 0 into register 
     ldr x21, [x20, GPIO_GPLEV0]  // Load the value at memory location [x0 + GPLEV0] into register x1
-    and x21, x21, #1 << 15    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
+    mov x3, 15
+    lsr x21, x21, x3
+    and x3, x21, #1    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
     cmp x21, #1              // Compare the result with 1
     beq izquierda               // Branch to 'case1' if the result is equal to 1
 
