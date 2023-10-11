@@ -29,8 +29,6 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-startGame:
-
     mov x19, 0x200000
     mov x2, 208
     mov x1, 16
@@ -65,9 +63,11 @@ loopGame:
 
    bl desplazarPosicion
 
-   bl pintarSerpiente
-
    bl delay
+
+   bl pintarFondo
+
+   // bl pintarSerpiente
 
    b loopGame
 
@@ -111,6 +111,9 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     ret
 
 pintarFondo: 
+
+    str x30, [sp, #-8]!
+
 	mov x22,512         	// Tamaño en Y 
 loop1:
 	mov x21,512         	// Tamaño en X 
@@ -185,14 +188,17 @@ cont:
 	b dibujarCuadradosXFila
 
 end:
-    b startGame
+
+    ldr x30, [sp], 8
+
+    ret
 
 // funcion que le paso como parametro la direccion inicial de framebuffer en x11, y 
 // dibuja el cuadrado a partir de esa direccion. Los cuadrados son de 48x48. Cuando
 // termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
 
 rectangulo: 
-    str x30, [sp, #-8]!
+ 
     mov x22, 48 // Tamaño en Y 
 dibujarY:
     mov X21, 48 // Tamaño en X
@@ -205,7 +211,7 @@ dibujarX:
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarY	  	// Si no es la última fila, saltar
-    ldr x30, [sp], 8
+  
     ret
 
 actualizarDireccion:   
@@ -266,72 +272,76 @@ loop10:
 	sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,loop6	  	// Si no es la última fila, saltar
 
-    b anda
+    ret
 
 desplazarPosicion:
 
     str x30, [sp, #-8]!
 
     mov x15, x2
-    mov x16, 0
+    mov x16, x2
+    lsl x16, x16, 3
+    sub x16, x16, 8
 
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
 
-    // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i+1];
-    ldr x13, [x19, x16] // x13 = snake_posiciones[i]
-    add x16, x16, 8
-    ldr x17, [x19, x16] // x17 = snake_posiciones[i+1]
+    // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
+    ldr x13, [x16, -8] // x13 = snake_posiciones[i-1]
+    str x13, [x16] // snake_posiciones[i] = snake_posiciones[i-1]
     sub x16, x16, 8
-    str x17, [x19, x16] // snake_posiciones[i+1] = snake_posiciones[i]
-    add x16, x16, 8
 
-        cmp x18, 0
-        beq movDerecha
-        cmp x18, 1
-        beq movIzquierda
-        cmp x18, 2
-        beq movArriba
-        cmp x18, 3
-        beq movAbajo
-
-continuar:
+    
+    bl test
 
     sub x15, x15, 1
 
-    b for 
+    b for
 forCont:
+
+    cmp x18, 0
+    beq movDerecha
+    cmp x18, 1
+    beq movIzquierda
+    cmp x18, 2
+    beq movArriba
+    cmp x18, 3
+    beq movAbajo
+
+continuar:
+
     ldr x30, [sp], 8
 
     ret
 
 
     movDerecha:
-        add x13, x13, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x13, [x19, 0]
+        add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
+        str x1, [x19, 0]
         b continuar
 
     movIzquierda:
-        sub x13, x13, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
-        str x13, [x19, 0]
+        sub x1, x1, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
+        str x1, [x19, 0]
         b continuar
 
      movArriba:
         mov x21, 48288
-        sub x13, x13, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
-        str x13, [x19, 0]
+        sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
+        str x1, [x19, 0]
         b continuar
     
      movAbajo:
         mov x21, 48288
-        add x13, x13, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
-        str x13, [x19, 0]
+        add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
+        str x1, [x19, 0]
         b continuar
 
 
 pintarSerpiente:
     str x30, [sp, #-8]!
+
     mov x15, x2
     mov x16, 0
     mov w3, 0x07E0
@@ -353,7 +363,7 @@ finishPaint:
     ret
 
 delay:
-    mov x21, 0xFFFFF
+    mov x21, 20000
     sub x21, x21, 1
     cmp x21, 0
     bne delay
