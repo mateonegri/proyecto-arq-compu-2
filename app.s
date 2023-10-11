@@ -44,7 +44,7 @@ startGame:
 
     str x1, [x19, 0]  // Aca se "traba" el codigo. Deja de ejecutar
 
-    bl pintarSerpienteInicio
+   bl pintarSerpienteInicio
 
    // bl dibujarManzanaInicio
 
@@ -52,7 +52,7 @@ startGame:
 
 loopGame: 
 
-    bl actualizarDireccion
+   bl actualizarDireccion
 
     b loopGame
 
@@ -182,7 +182,7 @@ actualizarDireccion:
     // Lectura de puertos de entrada y devuelvo direccion 
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
-    bl inputRead
+//    bl inputRead
 
     sub x28, x3, RIGHT
     cbz x28, derecha
