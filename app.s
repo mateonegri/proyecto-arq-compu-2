@@ -275,7 +275,7 @@ desplazarPosicion:
 
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
-    beq cont1
+    beq forCont
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i+1];
     ldr x13, [x19, x16] // x13 = snake_posiciones[i]
@@ -290,14 +290,14 @@ desplazarPosicion:
         cmp x18, 2
         beq movArriba
         cmp x18, 3
-        beq mov abajo
+        beq movAbajo
 
 continuar:
 
     sub x15, x15, 1
 
     b for 
-cont1:
+forCont:
     ldr x30, [sp], 8
 
     ret
@@ -315,12 +315,14 @@ cont1:
         b continuar
 
      movArriba:
-        sub x13, x13, 48288  // Muevo la pos de la cabeza para arriba y la guardo en el array
+        mov x21, 48288
+        sub x13, x13, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
         str x13, [x19, 0]
         b continuar
     
      movAbajo:
-        add x13, x13, 48288  // Muevo la pos de la cabeza para abajo y la guardo en el array
+        mov x21, 48288
+        add x13, x13, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
         str x13, [x19, 0]
         b continuar
 
@@ -332,9 +334,10 @@ pintarSerpiente:
 
 
 delay:
-    mov x21, 256000
+    mov x21, 0xFFFFF
     sub x21, x21, 1
     cmp x21, 0
     bne delay
     
     ret
+    
