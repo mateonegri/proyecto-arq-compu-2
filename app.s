@@ -6,6 +6,10 @@
     .equ TABLERO_ANCHO, 10
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
+    .equ LEFT, 0x40000
+    .equ RIGHT, 0x08000
+    .equ UP, 0x04000
+    .equ DOWN, 0x20000
        
 app:
 
@@ -179,27 +183,24 @@ actualizarDireccion:
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
     mov w20, PERIPHERAL_BASE + GPIO_BASE             // Move 0 into register 
-    ldr x21, [x20, GPIO_GPLEV0]  // Load the value at memory location [x0 + GPLEV0] into register x1
-    mov x3, 15
-    lsr x21, x21, x3
-    and x3, x21, #1    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
-    cmp x21, #1              // Compare the result with 1
+    ldr w21, [x20, GPIO_GPLEV0]  // Load the value at memory location [x0 + GPLEV0] into register x1
+  
+    and x3, x21, 0x40000    // Perform a bitwise AND operation to check bit 15 (GPIO 18)
+    cmp x3, #1              // Compare the result with 1
     beq izquierda               // Branch to 'case1' if the result is equal to 1
 
     // If bit 15 is not set, check other bits
-    ldr x21, [x20, GPIO_GPLEV0] // Load the value at memory location [x0 + GPLEV0] into register x1
-    and x21, x21, #1 << 14    // Check bit 14 for GPIO 18
-    cmp x21, #1              // Compare the result with 1
+    
+    and x3, x21, 0x04000    // Check bit 14 for GPIO 18
+    cmp x3, #1              // Compare the result with 1
     beq arriba               // Branch to 'case2' if the result is equal to 1
-
-    ldr x21, [x20, GPIO_GPLEV0]  // Load the value at memory location [x0 + GPLEV0] into register x1
-    and x21, x21, #1 << 18    // Check bit 18 for GPIO 18
-    cmp x21, #1              // Compare the result with 1
+   
+    and x3, x21, 0x20000   // Check bit 18 for GPIO 18
+    cmp x3, #1              // Compare the result with 1
     beq abajo               // Branch to 'case3' if the result is equal to 1
 
-    ldr x21, [x20, GPIO_GPLEV0] // Load the value at memory location [x0 + GPLEV0] into register x1
-    and x21, x21, #1 << 17    // Check bit 17 for GPIO 18
-    cmp x21, #1              // Compare the result with 1
+    and x3, x21, 0x08000    // Check bit 17 for GPIO 18
+    cmp x3, #1              // Compare the result with 1
     beq derecha               // Branch to 'case4' if the result is equal to 1
 
     ret
