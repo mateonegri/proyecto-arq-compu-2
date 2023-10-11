@@ -55,6 +55,7 @@ loopGame:
 
    bl actualizarDireccion
 
+
     b loopGame
 
 dibujarManzanaInicio:  // Esto anda mal
@@ -183,6 +184,8 @@ actualizarDireccion:
     // Lectura de puertos de entrada y devuelvo direccion 
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
+    str x30, [sp, #-8]!
+
     bl inputRead
 
     sub x28, x3, RIGHT
@@ -194,6 +197,9 @@ actualizarDireccion:
     sub x28, x22, UP
     cbz x28, arriba
 
+return:
+    ldr x30, [sp], 8
+
     ret
 
 izquierda:
@@ -202,7 +208,7 @@ izquierda:
     mov w3, 0xFFFF
     // bl test
 
-    ret
+    b return
 
 arriba:
     mov x18, 2
@@ -210,7 +216,7 @@ arriba:
     mov w3, 0xFFFF
     // bl test
 
-    ret
+    b return
 
 abajo:
     mov x18, 3
@@ -218,7 +224,7 @@ abajo:
     mov w3, 0xFFFF
     // bl test
 
-    ret
+    b return
 
 derecha:
     mov x18, 0
@@ -226,7 +232,7 @@ derecha:
     mov w3, 0xFFFF
     // bl test
 
-    ret
+    b return
 
 
 test:
