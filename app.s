@@ -1,11 +1,5 @@
 .global app
 
-.data
-    arrayBase: .dword arrayStart   // Get the array pointer value from memmap definition
-
-// variables accesibles por el nombre creo, se pueden guardar valores
-// usan el str, y traer el valor usando el ldr
-
 // Configuraciones
     .equ SNAKE_LONGITUD_MAX, 15
     .equ SNAKE_LONGITUD_MIN, 2
@@ -30,7 +24,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    ldr x19, arrayStart  // Direccion base del array posiciones serpiente
+    mov x19, 0x20000
 
 startGame:
 
@@ -48,7 +42,7 @@ startGame:
 
     bl pintarSerpienteInicio
 
-    bl dibujarManzanaInicio
+   // bl dibujarManzanaInicio
 
 loopGame: 
 
@@ -56,10 +50,10 @@ loopGame:
 
     b loopGame
 
-dibujarManzanaInicio:
+dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
     mov x5, 6114  // numero random para aparecer la primera manzana
-    add x11, x13, x5
+    add x11, x10, x5
     mov x9, x11  // Tengo en x9 la pos de la manzana
 
     bl rectangulo
@@ -179,7 +173,6 @@ dibujarX:
     ret
 
 test:
-
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
 	mov x2,512         	// Tamaño en Y
 loop6:
