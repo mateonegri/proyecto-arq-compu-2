@@ -192,6 +192,7 @@ end:
 // termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
 
 rectangulo: 
+    str x30, [sp, #-8]!
     mov x22, 48 // Tamaño en Y 
 dibujarY:
     mov X21, 48 // Tamaño en X
@@ -204,6 +205,7 @@ dibujarX:
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarY	  	// Si no es la última fila, saltar
+    ldr x30, [sp], 8
     ret
 
 actualizarDireccion:   
@@ -328,10 +330,26 @@ forCont:
 
 
 pintarSerpiente:
+    str x30, [sp, #-8]!
     mov x15, x2
+    mov x16, 0
+    mov w3, 0x07E0
 
+paintLoop:
+    cmp x15, 0
+    beq finishPaint
 
+    ldr x11, [x19, x16]
+    bl rectangulo
+    add x16, x16, 8
+    sub x15, x15, 1
 
+    b paintLoop
+
+finishPaint:
+
+    ldr x30, [sp], 8
+    ret
 
 delay:
     mov x21, 0xFFFFF
