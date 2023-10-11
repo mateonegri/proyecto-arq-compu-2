@@ -29,10 +29,9 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    mov x19, 0x20000
-
 startGame:
 
+    mov x19, 0x20000
     mov x2, 208
     mov x1, 16
     lsl x2, x2, 9
@@ -56,7 +55,7 @@ loopGame:
    bl actualizarDireccion
 
 
-    b loopGame
+   b loopGame
 
 dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
@@ -198,6 +197,7 @@ actualizarDireccion:
     cbz x28, arriba
 
 return:
+
     ldr x30, [sp], 8
 
     ret
