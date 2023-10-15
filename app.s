@@ -29,8 +29,6 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-   sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array, y 1 lugar para el pi
-
     mov x19, 0x200000
     mov x2, 208
     mov x1, 16
@@ -42,7 +40,9 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
+    sub sp, sp, 16
+    str x1, [sp]  
+    add sp, sp, 16
 
     bl pintarSerpienteInicio
 
@@ -87,6 +87,8 @@ dibujarManzanaInicio:  // Esto anda mal
 pintarSerpienteInicio: 
     str x30, [sp, #-8]!
 
+    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
+
     mov x2, 2
     mov w3, 0x07E0
     add x11, x1, xzr
@@ -99,8 +101,10 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [sp, #-8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
+
+    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
 
     ldr x30, [sp], 8
     
