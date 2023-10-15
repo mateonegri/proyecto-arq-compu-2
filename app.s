@@ -65,7 +65,7 @@ loopGame:
 
    bl delay
 
-   bl pintarFondo
+   // bl pintarFondo
 
    // bl pintarSerpiente
 
@@ -293,7 +293,7 @@ desplazarPosicion:
     sub x16, x16, 8
 
     
-    bl test
+    // bl test
 
     sub x15, x15, 1
 
