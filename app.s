@@ -67,7 +67,7 @@ loopGame:
 
    bl pintarFondo
 
-   // bl pintarSerpiente
+   bl pintarSerpiente
 
    b loopGame
 
@@ -113,6 +113,8 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
 pintarFondo: 
 
     str x30, [sp, #-8]!
+
+    add x10, x0, 0
 
 	mov x22,512         	// Tamaño en Y 
 loop1:
