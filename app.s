@@ -40,9 +40,7 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    sub sp, sp, SNAKE_LONGITUD_MAX*8
-    str x1, [sp]  
-    add sp, sp, SNAKE_LONGITUD_MAX*8
+    str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
 
     bl pintarSerpienteInicio
 
@@ -52,7 +50,7 @@ app:
 
 loopGame: 
 
-   bl actualizarDireccion
+   // bl actualizarDireccion
 
    cmp x18, 1
    beq test
@@ -63,15 +61,21 @@ loopGame:
 
    anda:
 
-   bl desplazarPosicion
+   // bl desplazarPosicion
 
-   bl delay
+   // bl delay
 
-   bl pintarFondo
+   // bl pintarFondo
 
-   bl pintarSerpiente
+   // bl pintarSerpiente
 
    b loopGame
+
+
+
+
+
+
 
 
 dibujarManzanaInicio:  // Esto anda mal
@@ -87,8 +91,6 @@ dibujarManzanaInicio:  // Esto anda mal
 pintarSerpienteInicio: 
     str x30, [sp, #-8]!
 
-    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
-
     mov x2, 2
     mov w3, 0x07E0
     add x11, x1, xzr
@@ -101,10 +103,8 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [sp, #8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
-
-    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
 
     ldr x30, [sp], 8
     
@@ -113,8 +113,6 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
 pintarFondo: 
 
     str x30, [sp, #-8]!
-
-    add x10, x0, 0
 
 	mov x22,512         	// Tamaño en Y 
 loop1:
@@ -259,29 +257,45 @@ derecha:
 
     b return
 
+
+test:
+
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	mov x22,512         	// Tamaño en Y
+loop6:
+	mov x21,512         	// Tamaño en X
+loop10:
+	sturh w3,[x10]	   	// Setear el color del pixel N
+	add x10,x10,2	   	// Siguiente pixel
+	sub x21,x21,1	   		// Decrementar el contador X
+	cbnz x21,loop10	   	// Si no terminó la fila, saltar
+	sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,loop6	  	// Si no es la última fila, saltar
+
+    ret
+
 desplazarPosicion:
 
     str x30, [sp, #-8]!
-
-    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
-    
 
     mov x15, x2
     mov x16, x2
     lsl x16, x16, 3
     sub x16, x16, 8
 
-    add sp, sp, x16
-
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
 
-    ldr x13, [sp, #-8]
-    str x13, [sp]
+    // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
+    ldr x13, [x16, -8] // x13 = snake_posiciones[i-1]
+    str x13, [x16] // snake_posiciones[i] = snake_posiciones[i-1]
+    sub x16, x16, 8
+
+    
+    bl test
 
     sub x15, x15, 1
-    sub sp, sp, 8
 
     b for
 forCont:
@@ -297,8 +311,6 @@ forCont:
 
 continuar:
 
-    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
-
     ldr x30, [sp], 8
 
     ret
@@ -306,33 +318,31 @@ continuar:
 
     movDerecha:
         add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x1, [sp, 0]
+        str x1, [x19, 0]
         b continuar
 
     movIzquierda:
         sub x1, x1, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
-        str x1, [sp, 0]
+        str x1, [x19, 0]
         b continuar
 
      movArriba:
         mov x21, 48288
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
-        str x1, [sp, 0]
+        str x1, [x19, 0]
         b continuar
     
      movAbajo:
         mov x21, 48288
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
-        str x1, [sp, 0]
+        str x1, [x19, 0]
         b continuar
 
 
 pintarSerpiente:
     str x30, [sp, #-8]!
 
-    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
-
-    mov x15, 2
+    mov x15, x2
     mov x16, 0
     mov w3, 0x07E0
 
@@ -340,7 +350,7 @@ paintLoop:
     cmp x15, 0
     beq finishPaint
 
-    ldr x11, [sp, x16]
+    ldr x11, [x19, x16]
     bl rectangulo
     add x16, x16, 8
     sub x15, x15, 1
@@ -349,30 +359,14 @@ paintLoop:
 
 finishPaint:
 
-    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
-
     ldr x30, [sp], 8
     ret
 
 delay:
-    mov x21, 0xFFF
+    mov x21, 20000
     sub x21, x21, 1
     cmp x21, 0
     bne delay
     
     ret
     
-test:
-	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	mov x22,512         	// Tamaño en Y
-loop6:
-	mov x21,512         	// Tamaño en X
-loop10:
-	sturh w3,[x10]	   	// Setear el color del pixel N
-	add x10,x10,2	   	// Siguiente pixel
-	sub x21,x21,1	   		// Decrementar el contador X
-	cbnz x21,loop10	   	// Si no terminó la fila, saltar
-	sub x22,x22,1	   		// Decrementar el contador Y
-	cbnz x22,loop6	  	// Si no es la última fila, saltar
-
-    ret
