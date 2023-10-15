@@ -50,7 +50,7 @@ app:
 
 loopGame: 
 
-   // bl actualizarDireccion
+   bl actualizarDireccion
 
    cmp x18, 1
    beq test
@@ -61,11 +61,11 @@ loopGame:
 
    anda:
 
-   // bl desplazarPosicion
+   bl desplazarPosicion
 
-   // bl delay
+   bl delay
 
-   // bl pintarFondo
+   bl pintarFondo
 
    // bl pintarSerpiente
 
