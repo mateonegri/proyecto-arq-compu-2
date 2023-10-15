@@ -29,7 +29,7 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    sub sp, sp, 128   // Se reservan 15 lugares para armar un array, y 1 lugar para el push y pop del lr
+    sub sp, sp, 120   // Se reservan 15 lugares para armar un array, y 1 lugar para el pi
 
     mov x19, 0x200000
     mov x2, 208
@@ -74,12 +74,6 @@ loopGame:
    b loopGame
 
 
-
-
-
-
-
-
 dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
     mov x5, 6114  // numero random para aparecer la primera manzana
@@ -91,7 +85,7 @@ dibujarManzanaInicio:  // Esto anda mal
     ret
 
 pintarSerpienteInicio: 
-    str x30, [sp, #8]!
+    str x30, [sp, #-8]!
 
     mov x2, 2
     mov w3, 0x07E0
@@ -108,13 +102,13 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
 
-    ldr x30, [sp], -8
+    ldr x30, [sp], 8
     
     ret
 
 pintarFondo: 
 
-    str x30, [sp, #8]!
+    str x30, [sp, #-8]!
 
     add x10, x0, 0
 
@@ -193,7 +187,7 @@ cont:
 
 end:
 
-    ldr x30, [sp], -8
+    ldr x30, [sp], 8
 
     ret
 
@@ -222,7 +216,7 @@ actualizarDireccion:
     // Lectura de puertos de entrada y devuelvo direccion 
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
-    str x30, [sp, #8]!
+    str x30, [sp, #-8]!
 
     bl inputRead
 
@@ -237,7 +231,7 @@ actualizarDireccion:
 
 return:
 
-    ldr x30, [sp], -8
+    ldr x30, [sp], 8
 
     ret
 
@@ -263,7 +257,7 @@ derecha:
 
 desplazarPosicion:
 
-str x30, [sp, #8]!
+    str x30, [sp, #-8]!
 
     mov x15, x2
     mov x16, x2
@@ -298,7 +292,7 @@ forCont:
 
 continuar:
 
-    ldr x30, [sp], -8
+    ldr x30, [sp], 8
 
     ret
 
@@ -327,7 +321,7 @@ continuar:
 
 
 pintarSerpiente:
-str x30, [sp, #8]!
+    str x30, [sp, #-8]!
 
     mov x15, 2
     mov x16, 0
@@ -346,7 +340,7 @@ paintLoop:
 
 finishPaint:
 
-    ldr x30, [sp], -8
+    ldr x30, [sp], 8
     ret
 
 delay:
