@@ -259,23 +259,6 @@ derecha:
 
     b return
 
-
-test:
-
-	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
-	mov x22,512         	// Tamaño en Y
-loop6:
-	mov x21,512         	// Tamaño en X
-loop10:
-	sturh w3,[x10]	   	// Setear el color del pixel N
-	add x10,x10,2	   	// Siguiente pixel
-	sub x21,x21,1	   		// Decrementar el contador X
-	cbnz x21,loop10	   	// Si no terminó la fila, saltar
-	sub x22,x22,1	   		// Decrementar el contador Y
-	cbnz x22,loop6	  	// Si no es la última fila, saltar
-
-    ret
-
 desplazarPosicion:
 
     str x30, [sp, #-8]!
@@ -344,7 +327,7 @@ continuar:
 pintarSerpiente:
     str x30, [sp, #-8]!
 
-    mov x15, x2
+    mov x15, 2
     mov x16, 0
     mov w3, 0x07E0
 
@@ -365,10 +348,24 @@ finishPaint:
     ret
 
 delay:
-    mov x21, 20000
+    mov x21, 0xFFF
     sub x21, x21, 1
     cmp x21, 0
     bne delay
     
     ret
     
+test:
+	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
+	mov x22,512         	// Tamaño en Y
+loop6:
+	mov x21,512         	// Tamaño en X
+loop10:
+	sturh w3,[x10]	   	// Setear el color del pixel N
+	add x10,x10,2	   	// Siguiente pixel
+	sub x21,x21,1	   		// Decrementar el contador X
+	cbnz x21,loop10	   	// Si no terminó la fila, saltar
+	sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,loop6	  	// Si no es la última fila, saltar
+
+    ret
