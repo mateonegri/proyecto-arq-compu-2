@@ -40,9 +40,9 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    sub sp, sp, 16
+    sub sp, sp, SNAKE_LONGITUD_MAX*8
     str x1, [sp]  
-    add sp, sp, 16
+    add sp, sp, SNAKE_LONGITUD_MAX*8
 
     bl pintarSerpienteInicio
 
@@ -101,7 +101,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [sp, #-8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [sp, #8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
 
     add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
@@ -263,24 +263,25 @@ desplazarPosicion:
 
     str x30, [sp, #-8]!
 
+    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
+    
+
     mov x15, x2
     mov x16, x2
     lsl x16, x16, 3
     sub x16, x16, 8
 
+    add sp, sp, x16
+
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
 
-    // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
-    ldr x13, [x16, -8] // x13 = snake_posiciones[i-1]
-    str x13, [x16] // snake_posiciones[i] = snake_posiciones[i-1]
-    sub x16, x16, 8
-
-    
-    bl test
+    ldr x13, [sp, #-8]
+    str x13, [sp]
 
     sub x15, x15, 1
+    sub sp, sp, 8
 
     b for
 forCont:
@@ -296,6 +297,8 @@ forCont:
 
 continuar:
 
+    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
+
     ldr x30, [sp], 8
 
     ret
@@ -303,29 +306,31 @@ continuar:
 
     movDerecha:
         add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp, 0]
         b continuar
 
     movIzquierda:
         sub x1, x1, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp, 0]
         b continuar
 
      movArriba:
         mov x21, 48288
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp, 0]
         b continuar
     
      movAbajo:
         mov x21, 48288
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp, 0]
         b continuar
 
 
 pintarSerpiente:
     str x30, [sp, #-8]!
+
+    sub sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
 
     mov x15, 2
     mov x16, 0
@@ -335,7 +340,7 @@ paintLoop:
     cmp x15, 0
     beq finishPaint
 
-    ldr x11, [x19, x16]
+    ldr x11, [sp, x16]
     bl rectangulo
     add x16, x16, 8
     sub x15, x15, 1
@@ -343,6 +348,8 @@ paintLoop:
     b paintLoop
 
 finishPaint:
+
+    add sp, sp, SNAKE_LONGITUD_MAX*8 // Se reservan 15 lugares para armar un array
 
     ldr x30, [sp], 8
     ret
