@@ -49,7 +49,7 @@ app:
 
 loopGame: 
 
-   // bl actualizarDireccion
+   bl actualizarDireccion
 
    // bl desplazarPosicion
 
@@ -179,9 +179,7 @@ cont:
 
 end:
 
-    mov x30, x28
-
-    ret
+    br x28
 
 // funcion que le paso como parametro la direccion inicial de framebuffer en x11, y 
 // dibuja el cuadrado a partir de esa direccion. Los cuadrados son de 48x48. Cuando
@@ -210,7 +208,7 @@ actualizarDireccion:
 
     mov x28, x30
 
-    bl inputRead
+    // bl inputRead
 
     sub x27, x3, RIGHT
     cbz x27, derecha
@@ -223,9 +221,7 @@ actualizarDireccion:
 
 return:
 
-    mov x30, x28
-
-    ret
+    br x28
 
 izquierda:
     mov x18, 1
@@ -288,9 +284,6 @@ desplazarPosicion:
     str x13, [sp, x16] // snake_posiciones[i] = snake_posiciones[i-1]
     add x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
 
-    
-    // bl test
-
     sub x15, x15, 1
 
     b for
@@ -307,9 +300,7 @@ forCont:
 
 continuar:
 
-    mov x30, x28
-
-    ret
+    br x28
 
 
     movDerecha:
@@ -355,10 +346,10 @@ paintLoop:
 
 finishPaint:
 
-    mov x30, x28
-    ret
+    br x28
 
 delay:
+
     mov x21, 20000
     sub x21, x21, 1
     cmp x21, 0

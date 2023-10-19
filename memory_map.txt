@@ -9,29 +9,28 @@ Linker script and memory map
 
 LOAD main.o
 
-.text           0x0000000000000000    0x103cc
+.text           0x0000000000000000    0x10388
  *(.text*)
- .text          0x0000000000000000    0x103cc main.o
+ .text          0x0000000000000000    0x10388 main.o
                 0x00000000000100a0                inputRead
                 0x00000000000100bc                app
 
-.iplt           0x00000000000103cc        0x0
- .iplt          0x00000000000103cc        0x0 main.o
+.iplt           0x0000000000010388        0x0
+ .iplt          0x0000000000010388        0x0 main.o
 
-.rela.dyn       0x00000000000103d0        0x0
- .rela.iplt     0x00000000000103d0        0x0 main.o
- .rela.data     0x00000000000103d0        0x0 main.o
+.rela.dyn       0x0000000000010388        0x0
+ .rela.iplt     0x0000000000010388        0x0 main.o
+ .rela.data     0x0000000000010388        0x0 main.o
 
-.data           0x00000000000103cc       0x10
- .data          0x00000000000103cc       0x10 main.o
+.data           0x0000000000010388        0x8
+ .data          0x0000000000010388        0x8 main.o
 
-.igot.plt       0x00000000000103e0        0x0
- .igot.plt      0x00000000000103e0        0x0 main.o
+.igot.plt       0x0000000000010390        0x0
+ .igot.plt      0x0000000000010390        0x0 main.o
 
-.bss            0x00000000000103dc        0x0
+.bss            0x0000000000010390        0x0
  *(.bss*)
- .bss           0x00000000000103dc        0x0 main.o
+ .bss           0x0000000000010390        0x0 main.o
                 0x0000000000400000                _stack_end = 0x400000
-                0x0000000000200000                _array_start = 0x200000
 OUTPUT(main.elf elf64-littleaarch64)
 LOAD linker stubs
