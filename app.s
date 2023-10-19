@@ -51,7 +51,7 @@ loopGame:
 
    // bl actualizarDireccion
 
-   bl desplazarPosicion
+   // bl desplazarPosicion
 
    // bl delay
 
@@ -85,7 +85,9 @@ pintarSerpienteInicio:
 
     mov x2, 2
     mov w3, 0x07E0
-    add x11, x1, xzr
+    // add x11, x1, xzr
+
+    ldr x11, [sp]
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
     add x11, x1, xzr   
