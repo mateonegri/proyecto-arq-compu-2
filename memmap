@@ -11,5 +11,5 @@ SECTIONS
 }
 
 _stack_end = 0x400000;        /* STACK at RAM end */
-_array_start = 0x200000; /* Array start */
+
 

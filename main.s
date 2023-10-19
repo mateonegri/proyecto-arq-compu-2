@@ -1,6 +1,5 @@
 	.data
         _stack_ptr: .dword _stack_end   // Get the stack pointer value from memmap definition
-		_array_ptr: .dword _array_start
 	
 	.text
 	.org 0x0000
@@ -26,8 +25,6 @@
 	.equ GPIO_BASE, 	0x200000  	// Base de los GPIO desde la dirección PERIPHERAL_BASE.
 	.equ GPIO_GPFSEL1, 	0x4    		// GPIO Function Select 1
 	.equ GPIO_GPLEV0, 	0x34    	// GPIO Pin Level 0 o los niveles de los pines inferiores (0-31)
-
-	ldr x19, _array_ptr
 	
 	ldr     x1, _stack_ptr   // Load stack pointer to X1
     mov     sp, x1          // Move stack pointer to the sp register

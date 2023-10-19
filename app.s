@@ -29,7 +29,6 @@ app:
 //---------------- Main code --------------------
 	bl pintarFondo
 
-    mov x19, 0x200000
     mov x2, 208
     mov x1, 16
     lsl x2, x2, 9
@@ -40,7 +39,7 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    str x1, [x19]  // Aca se "traba" el codigo. Deja de ejecutar
+    str x1, [sp]  // Aca se "traba" el codigo. Deja de ejecutar
 
     bl pintarSerpienteInicio
 
@@ -52,15 +51,6 @@ loopGame:
 
    // bl actualizarDireccion
 
-   cmp x18, 1
-   beq test
-   cmp x18, 2
-   beq test
-   cmp x18, 3
-   beq test
-
-   anda:
-
    // bl desplazarPosicion
 
    // bl delay
@@ -68,6 +58,8 @@ loopGame:
    // bl pintarFondo
 
    // bl pintarSerpiente
+
+   // checkear colisiones antes de pintar
 
    b loopGame
 
@@ -89,7 +81,7 @@ dibujarManzanaInicio:  // Esto anda mal
     ret
 
 pintarSerpienteInicio: 
-    str x30, [sp, #-8]!
+    mov x28, x30
 
     mov x2, 2
     mov w3, 0x07E0
@@ -103,16 +95,14 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [x19, 8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [sp, #-8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
 
-    ldr x30, [sp], 8
-    
-    ret
+    br x28
 
 pintarFondo: 
 
-    str x30, [sp, #-8]!
+    mov x28, x30
 
 	mov x22,512         	// Tamaño en Y 
 loop1:
@@ -148,7 +138,7 @@ dibujarCuadrados:
 
     mov x7, 10 // Nueva fila vuelvo a empezar el contador
 
-    cmp x8, 11   // Si el contador de cantidad de filas es 8, salteo la instruccion de sumarle 64
+    cmp x8, 11   // Si el contador de cantidad de filas es 10, salteo la instruccion de sumarle 64
     beq cont1   // es decir, de bajar una fila. Si no es 8, le sumo 64 a la direccion de inicio y voy a bajar una fila
 
     mov x12, 48288   // ( Tamaño del cuadrado - 1 * 1024 ) + ( TamBorde * 2 ) + (TamCuadrado*2)
@@ -189,7 +179,7 @@ cont:
 
 end:
 
-    ldr x30, [sp], 8
+    mov x30, x28
 
     ret
 
@@ -218,22 +208,22 @@ actualizarDireccion:
     // Lectura de puertos de entrada y devuelvo direccion 
     // 0 --> derecha, 1 --> izquierda, 2 --> arriba, 3 --> abajo
 
-    str x30, [sp, #-8]!
+    mov x28, x30
 
     bl inputRead
 
-    sub x28, x3, RIGHT
-    cbz x28, derecha
-    sub x28, x23, LEFT
-    cbz x28, izquierda
-    sub x28, X21, DOWN
-    cbz x28, abajo
-    sub x28, x22, UP
-    cbz x28, arriba
+    sub x27, x3, RIGHT
+    cbz x27, derecha
+    sub x27, x23, LEFT
+    cbz x27, izquierda
+    sub x27, X21, DOWN
+    cbz x27, abajo
+    sub x27, x22, UP
+    cbz x27, arriba
 
 return:
 
-    ldr x30, [sp], 8
+    mov x30, x28
 
     ret
 
@@ -276,21 +266,27 @@ loop10:
 
 desplazarPosicion:
 
-    str x30, [sp, #-8]!
+    mov x28, x30
 
     mov x15, x2
     mov x16, x2
     lsl x16, x16, 3
-    sub x16, x16, 8
+    sub x16, x16, 8 // x16 = Longitud*8 - 8
+    sub x16, xzr, x16 // Hago x16 negativo porque uso el stack, manejo offset negativos
+    // x16 deberia tener el offset para acceder a la ultima posicion
+
+    // empiezo por la cola
 
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
-    ldr x13, [x16, -8] // x13 = snake_posiciones[i-1]
-    str x13, [x16] // snake_posiciones[i] = snake_posiciones[i-1]
-    sub x16, x16, 8
+    add x16, x16, 8  // Le sumo 8 para tener el offset de la pos i-1
+    ldr x13, [sp, x16] // x13 = snake_posiciones[i-1]
+    sub x16, x16, 8 // Le resto 8 para volver al offset de la pos i
+    str x13, [sp, x16] // snake_posiciones[i] = snake_posiciones[i-1]
+    add x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
 
     
     // bl test
@@ -311,36 +307,36 @@ forCont:
 
 continuar:
 
-    ldr x30, [sp], 8
+    mov x30, x28
 
     ret
 
 
     movDerecha:
         add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp]
         b continuar
 
     movIzquierda:
         sub x1, x1, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp]
         b continuar
 
      movArriba:
         mov x21, 48288
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp]
         b continuar
     
      movAbajo:
         mov x21, 48288
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
-        str x1, [x19, 0]
+        str x1, [sp]
         b continuar
 
 
 pintarSerpiente:
-    str x30, [sp, #-8]!
+    mov x28, x30
 
     mov x15, x2
     mov x16, 0
@@ -350,16 +346,16 @@ paintLoop:
     cmp x15, 0
     beq finishPaint
 
-    ldr x11, [x19, x16]
+    ldr x11, [sp, x16]
     bl rectangulo
-    add x16, x16, 8
+    sub x16, x16, 8
     sub x15, x15, 1
 
     b paintLoop
 
 finishPaint:
 
-    ldr x30, [sp], 8
+    mov x30, x28
     ret
 
 delay:
