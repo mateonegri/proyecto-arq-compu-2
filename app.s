@@ -39,8 +39,7 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    str x1, [sp]  // Aca se "traba" el codigo. Deja de ejecutar
-    str x1, [sp, #-8]  // Guardo de a 2 registros para asegurar el stack allignment que es de 16 bytes 
+    stp x1, x1 [sp, #-16]  // Aca se "traba" el codigo. Deja de ejecutar
 
     bl pintarSerpienteInicio
 
