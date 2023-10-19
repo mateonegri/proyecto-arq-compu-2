@@ -49,9 +49,9 @@ app:
 
 loopGame: 
 
-   bl actualizarDireccion
+   // bl actualizarDireccion
 
-   // bl desplazarPosicion
+   bl desplazarPosicion
 
    // bl delay
 
@@ -208,7 +208,7 @@ actualizarDireccion:
 
     mov x28, x30
 
-    // bl inputRead
+    bl inputRead
 
     sub x27, x3, RIGHT
     cbz x27, derecha
