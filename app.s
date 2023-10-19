@@ -279,9 +279,9 @@ desplazarPosicion:
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
     add x16, x16, 8  // Le sumo 8 para tener el offset de la pos i-1
-    ldr x13, [sp, x16] // x13 = snake_posiciones[i-1]
+    // ldr x13, [sp, x16] // x13 = snake_posiciones[i-1]
     sub x16, x16, 8 // Le resto 8 para volver al offset de la pos i
-    str x13, [sp, x16] // snake_posiciones[i] = snake_posiciones[i-1]
+    // str x13, [sp, x16] // snake_posiciones[i] = snake_posiciones[i-1]
     add x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
 
     sub x15, x15, 1
@@ -305,7 +305,7 @@ continuar:
 
     movDerecha:
         add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x1, [sp]
+        // str x1, [sp]
         b continuar
 
     movIzquierda:
