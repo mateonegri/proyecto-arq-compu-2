@@ -354,7 +354,7 @@ finishPaint:
 
 delay:
 
-    mov x21, 20000
+    mov x21, 80000
     sub x21, x21, 1
     cmp x21, 0
     bne delay
