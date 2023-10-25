@@ -39,7 +39,11 @@ app:
     add x1, x13, xzr
     add x1, x1, 384
 
-    stp x1, x1 [sp, #-16]  // Aca se "traba" el codigo. Deja de ejecutar
+    ldr x19, =ARRAY_START
+    str x1, [x19]
+
+    // str x1, [sp]  
+    // str x1, [sp, #-8]
 
     bl pintarSerpienteInicio
 
@@ -63,13 +67,6 @@ loopGame:
 
    b loopGame
 
-
-
-
-
-
-
-
 dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
     mov x5, 6114  // numero random para aparecer la primera manzana
@@ -87,7 +84,7 @@ pintarSerpienteInicio:
     mov w3, 0x07E0
     // add x11, x1, xzr
 
-    ldr x11, [sp]
+    ldr x11, [x19] // Aca se rompe. Stack allignment?
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
     add x11, x1, xzr   
@@ -97,7 +94,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     bne loopSerpiente
 
     add x11, x11, 96
-    str x11, [sp, #-8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
+    str x11, [x19, #8]  // Guardo pos de la siguiente pos de la snake en el array pos 1.
     mov x2, 2
 
     br x28

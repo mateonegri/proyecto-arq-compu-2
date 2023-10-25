@@ -102,3 +102,20 @@ FB_POINTER:
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
 
+ARRAY_START:
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+	.word 0
+
