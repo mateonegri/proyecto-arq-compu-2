@@ -370,11 +370,11 @@ checkAppleCollision:
     mov x28, x30  // Preserve the return address
     ldr x17, [x19]  // Load the current position of the snake's head
     cmp x17, x9  // Compare head position with apple position
-    beq collisionDetected  // If they are the same, a collision occurred
+    beq collisionDetected5  // If they are the same, a collision occurred
     mov x21, 0  // Set a flag for no collision
     b return2
 
-collisionDetected:
+collisionDetected5:
 
     mov x21, 1  // Set a flag for collision
 
@@ -435,7 +435,8 @@ salto:
 
 salto1:
     mov x18, x17
-    add x18, x18, 48128  // Agregaria la nuevos de la cola abajo
+    mov x25, 48128
+    add x18, x18, x25  // Agregaria la nuevos de la cola abajo
     cmp x18, x16    
     beq salto3
     bl checkBounds
@@ -445,7 +446,8 @@ salto1:
 
 salto3:
     mov x18, x17
-    sub x18, x18, 48128
+    mov x25, 48128
+    sub x18, x18, x25
     cmp x18, x16
     beq return4 // Agregaria la nuevo pos de la cola arriba
     bl checkBounds
@@ -482,7 +484,7 @@ checkBounds:
     cmp x18, x13     // Si la cabeza de la snake < que el minimo del tablero --> choco con el borde superior
     blt collisionDetected2
 
-leftBoundCheck:
+leftBoundCheck2:
 
     mov x24, x18
     add x24, x24, 96
@@ -493,7 +495,7 @@ leftBoundCheck:
     add x23, x23, 1
 
     cmp x23, 479
-    bne leftBoundCheck
+    bne leftBoundCheck2
 
     mov x23, 0
     mov x22, 16
@@ -505,7 +507,7 @@ leftBoundCheck:
 
     add x13, x13, 958 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
 
-rightBoundCheck:
+rightBoundCheck2:
 
     mov x24, x18
     cmp x24, x13
@@ -515,7 +517,7 @@ rightBoundCheck:
     add x23, x23, 1
 
     cmp x23, 479
-    bne rightBoundCheck
+    bne rightBoundCheck2
 
     
     mov x23, 0
