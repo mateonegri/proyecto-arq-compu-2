@@ -100,9 +100,10 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
     br x28
 
 pintarFondo: 
+    mov x28, x30
 
     add x10, x0, 0
-    mov x28, x30
+    mov w3, 0x001F 
 
 	mov x22,512         	// Tamaño en Y 
 loop1:
@@ -317,14 +318,14 @@ continuar:
 
      movArriba:
         ldr x1, [x19]
-        mov x21, 48288
+        mov x21, 48128
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
         str x1, [x19]
         b continuar
     
      movAbajo:
         ldr x1, [x19]
-        mov x21, 48288
+        mov x21, 48128
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
         str x1, [x19]
         b continuar
@@ -353,12 +354,10 @@ finishPaint:
     br x28
 
 delay:
-
-    mov x21, 80000
-delay2:
-    sub x21, x21, 1
-    cmp x21, 0
-    bne delay2
+	movz x21, 0x10, lsl #16
+delay1: 
+	sub x21,x21,#1
+	cbnz x21, delay1
     
     ret
     
