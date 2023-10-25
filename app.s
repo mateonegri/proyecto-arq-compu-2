@@ -57,15 +57,28 @@ loopGame:
 
     bl desplazarPosicion
 
+    bl checkAppleCollision
+
+    cmp x21, 1
+    beq extendSnake
+
+    bl checkBodyCollision
+
+    cmp x21, 1
+    beq endGame
+
+    bl checkBorderCollision
+
+    cmp x21, 1
+    beq endGame
+
     bl delay
 
     bl pintarFondo
 
     bl pintarSerpiente
 
-   // checkear colisiones antes de pintar
-
-   b loopGame
+    b loopGame
 
 dibujarManzanaInicio:  // Esto anda mal
     mov w3, 0xF800
@@ -82,9 +95,8 @@ pintarSerpienteInicio:
 
     mov x2, 2
     mov w3, 0x07E0
-    // add x11, x1, xzr
 
-    ldr x11, [x19] // Aca se rompe. Stack allignment?
+    ldr x11, [x19] 
 loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos de la serpiente)
     bl rectangulo
     add x11, x1, xzr   
@@ -353,6 +365,303 @@ finishPaint:
 
     br x28
 
+checkAppleCollision:
+
+    mov x28, x30  // Preserve the return address
+    ldr x17, [x19]  // Load the current position of the snake's head
+    cmp x17, x9  // Compare head position with apple position
+    beq collisionDetected  // If they are the same, a collision occurred
+    mov x21, 0  // Set a flag for no collision
+    b return2
+
+collisionDetected:
+
+    mov x21, 1  // Set a flag for collision
+
+return2:
+
+    br x28  // Return to the calling function
+
+extendSnake:
+
+    mov x28, x30
+
+    add x2, x2, 1  // Aumento la longitud de la serpiente en 1
+
+    cmp x2, 15
+    beq win
+
+    mov x15, x2    // x15 = longitud de la serpeinte
+    lsl x15, x15, 3 // x15 * 8
+    sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
+
+    ldr x17, [x19, x15]  // Traigo la ultima posicion de la serpiente
+    sub x15, x15, 8
+    ldr x16, [x19, x15] // Traigo la penultima posicion de la serpiente
+    add x15, x15, 8
+
+    // A partir de la ultima posicion tengo que calcular la nueva parte del cuerpo
+    // si este calculo me da igual a x16(es decir la posicion siguiente), tengo
+    // que volver a calcular en otra pos. Entonces la nueva cola va a estar en posiciones 
+    // random que dependen de donde se encuentre la posicion siguiente, o de donde se encuentre los
+    // bordes.
+
+    // Dentro de newPosNoCollisions deberia checkear todos los bounds
+    // y si ninguno da problema devuelvo un 0, sino si alguno da problema
+    // significa que esta fuera de ese bound, devuelvo 1
+
+    // Primero checkeo con las posicion siguiente
+
+    mov x21, 1 // Asumo siempre colisiones 
+
+    mov x18, x17
+    add x18, x18, 96 // Agregaria la nueva pos a la derecha de la cola
+    cmp x18, x16
+    beq salto
+    bl checkBounds
+
+    cmp x21, 0
+    beq newPosNoCollisions
+
+salto:
+    mov x18, x17
+    sub x18, x18, 96 // Agregaria la nueva pos de la cola a la izquierda
+    cmp x18, x16
+    beq salto1 
+    bl checkBounds
+
+    cmp x21, 0
+    beq newPosNoCollisions
+
+salto1:
+    mov x18, x17
+    add x18, x18, 48128  // Agregaria la nuevos de la cola abajo
+    cmp x18, x16    
+    beq salto3
+    bl checkBounds
+
+    cmp x21, 0
+    beq newPosNoCollisions
+
+salto3:
+    mov x18, x17
+    sub x18, x18, 48128
+    cmp x18, x16
+    beq return4 // Agregaria la nuevo pos de la cola arriba
+    bl checkBounds
+
+    cmp x21, 0
+    beq newPosNoCollisions
+
+    b return4
+
+newPosNoCollisions:
+    add x15, x15, 8 // Le agrego una pos al array
+    str x18, [x19, x15]
+    b return4
+
+checkBounds:
+
+    str x30, [sp, #-8]!
+
+    add x10, x0, 0 // X10 contiene la dirección base del framebuffer
+
+    // Calculo direccion de inicio del primer cuadrado (x,y) = (16,16)
+
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    mov x23, 0
+
+    // Ahora en x13 tengo el valor minimo para checkear limites
+
+    cmp x18, x13     // Si la cabeza de la snake < que el minimo del tablero --> choco con el borde superior
+    blt collisionDetected2
+
+leftBoundCheck:
+
+    mov x24, x18
+    add x24, x24, 96
+    cmp x24, x13
+    beq collisionDetected2
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne leftBoundCheck
+
+    mov x23, 0
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    add x13, x13, 958 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
+
+rightBoundCheck:
+
+    mov x24, x18
+    cmp x24, x13
+    beq collisionDetected2
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne rightBoundCheck
+
+    
+    mov x23, 0
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    cmp x18, x13
+    bgt collisionDetected2
+
+    mov x21, 0
+
+    ldr x30, [sp], 8
+    
+    ret
+
+collisionDetected2:
+
+    mov x21, 1
+
+    ldr x30, [sp], 8
+
+    ret
+
+return4:
+    br x28
+
+checkBodyCollision:
+
+    mov x28, x30
+    mov x15, x2  // Load the length of the snake
+    sub x15, x15, 1
+    ldr x16, [x19]  // Load the current position of the snake's head
+    cmp x15, 2  // If the snake length is 0, no collision
+    beq noCollision
+
+    mov x22, 8
+
+checkLoop:
+
+    ldr x17, [x19, x22]  // Load a body segment's position
+    cmp x17, x16  // Compare it with the head position
+    beq collisionDetected  // If they are the same, a collision occurred
+    add x22, x22, 8  // Move to the next body segment
+    subs x15, x15, 1  // Decrement the counter
+    bne checkLoop
+
+noCollision:
+
+    mov x21, 0  // Set a flag for no collision
+    b return3
+
+collisionDetected:
+
+    mov x21, 1  // Set a flag for collision
+
+return3:
+
+    br x28
+
+checkBorderCollision:
+
+    mov x28, x30
+
+    ldr x17, [x19]  // Traigo la pos de la cabeza
+
+    add x10, x0, 0 // X10 contiene la dirección base del framebuffer
+
+    // Calculo direccion de inicio del primer cuadrado (x,y) = (16,16)
+
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    mov x23, 0
+
+
+    // Ahora en x13 tengo el valor minimo para checkear limites
+
+    cmp x17, x13     // Si la cabeza de la snake < que el minimo del tablero --> choco con el borde superior
+    blt collisionDetected1
+
+leftBoundCheck:
+
+    mov x18, x17
+    add x18, x18, 96
+    cmp x18, x13
+    beq collisionDetected1
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne leftBoundCheck
+
+    mov x23, 0
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    add x13, x13, 958 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
+
+rightBoundCheck:
+
+    mov x18, x17
+    cmp x18, x13
+    beq collisionDetected1
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne rightBoundCheck
+
+    
+    mov x23, 0
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    cmp x17, x13
+    bgt collisionDetected1
+
+    mov x21, 0
+    b return1
+
+collisionDetected1:
+
+    mov x21, 1
+
+return1:
+
+    br x28
+
 delay:
 	movz x21, 0x10, lsl #16
 delay1: 
@@ -360,4 +669,13 @@ delay1:
 	cbnz x21, delay1
     
     ret
-    
+
+win:
+
+    // Prender led verdes y terminar juego
+
+endGame:
+
+    // Prender los led rojos y terminar el juego
+
+
