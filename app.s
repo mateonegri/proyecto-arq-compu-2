@@ -53,15 +53,15 @@ app:
 
 loopGame: 
 
-   // bl actualizarDireccion
+    bl actualizarDireccion
 
-   // bl desplazarPosicion
+    bl desplazarPosicion
 
-   // bl delay
+    bl delay
 
-   // bl pintarFondo
+    bl pintarFondo
 
-   // bl pintarSerpiente
+    bl pintarSerpiente
 
    // checkear colisiones antes de pintar
 
@@ -101,6 +101,7 @@ loopSerpiente: // A x11 le paso el valor de x1 (valor del framebuffer con la pos
 
 pintarFondo: 
 
+    add x10, x0, 0
     mov x28, x30
 
 	mov x22,512         	// Tamaño en Y 
@@ -263,25 +264,25 @@ desplazarPosicion:
 
     mov x28, x30
 
-    mov x15, x2
+    mov x15, x2 // En x2 tengo la longitud actual de la serpiente
+    sub x15, x15, 1 // Le resto 1 porque tengo que cambiar todas las pos menos la pos 0
     mov x16, x2
     lsl x16, x16, 3
     sub x16, x16, 8 // x16 = Longitud*8 - 8
-    sub x16, xzr, x16 // Hago x16 negativo porque uso el stack, manejo offset negativos
-    // x16 deberia tener el offset para acceder a la ultima posicion
 
-    // empiezo por la cola
+    // En x16 tengo la longitud de la serpiente - 8, ya que la primera pos es 0. 
+    // Empiezo por la cola haciendo cambios de pos hacia adelante hasta llegar a la cabeza y calcular la nueva posicion.
 
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
-    add x16, x16, 8  // Le sumo 8 para tener el offset de la pos i-1
-    ldr x13, [sp, x16] // x13 = snake_posiciones[i-1]
-    sub x16, x16, 8 // Le resto 8 para volver al offset de la pos i
-    str x13, [sp, x16] // snake_posiciones[i] = snake_posiciones[i-1]
-    add x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
+    sub x16, x16, 8 // Le resto 8 a x16 para tener la pos [i - 1]
+    ldr x13, [x19, x16] // x13 = snake_posiciones[i-1]
+    add x16, x16, 8 // Le sumo 8 para volver al offset de la pos i
+    str x13, [x19, x16] // snake_posiciones[i] = snake_posiciones[i-1]
+    sub x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
 
     sub x15, x15, 1
 
@@ -303,25 +304,29 @@ continuar:
 
 
     movDerecha:
+        ldr x1, [x19]
         add x1, x1, 96  // Muevo la pos de la cabeza a la derecha y la guardo en el array
-        str x1, [sp]
+        str x1, [x19]
         b continuar
 
     movIzquierda:
+        ldr x1, [x19]
         sub x1, x1, 96  // Muevo la pos de la cabeza a la izquierda y la guardo en el array
-        str x1, [sp]
+        str x1, [x19]
         b continuar
 
      movArriba:
+        ldr x1, [x19]
         mov x21, 48288
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
-        str x1, [sp]
+        str x1, [x19]
         b continuar
     
      movAbajo:
+        ldr x1, [x19]
         mov x21, 48288
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
-        str x1, [sp]
+        str x1, [x19]
         b continuar
 
 
@@ -336,9 +341,9 @@ paintLoop:
     cmp x15, 0
     beq finishPaint
 
-    ldr x11, [sp, x16]
+    ldr x11, [x19, x16]
     bl rectangulo
-    sub x16, x16, 8
+    add x16, x16, 8
     sub x15, x15, 1
 
     b paintLoop
