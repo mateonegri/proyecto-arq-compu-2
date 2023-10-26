@@ -617,16 +617,32 @@ checkBorderCollision:
 leftBoundCheck:
 
     mov x18, x17
-    add x18, x18, 96
     cmp x18, x13
-    // beq collisionDetected1
-    beq test
+    blt collisionLeftBound
 
     add x13, x13, 1024
     add x23, x23, 1
 
     cmp x23, 479
     bne leftBoundCheck
+
+    b continueLeftCheck
+
+collisionLeftBound:
+
+    sub x13, x13, 64 // Me voy al pixel inmediato del borde de arriba
+    cmp x18, x13
+    bge collisionDetected1
+
+    add x13, x13, 64 // Vuelvo el pixel a su pos original y sigo con el loop
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne leftBoundCheck
+
+continueLeftCheck:
 
     mov x23, 0
     mov x22, 16
@@ -642,7 +658,7 @@ rightBoundCheck:
 
     mov x18, x17
     cmp x18, x13
-    beq collisionDetected1
+    bge collisionRightBound
 
     add x13, x13, 1024
     add x23, x23, 1
@@ -650,7 +666,23 @@ rightBoundCheck:
     cmp x23, 479
     bne rightBoundCheck
 
+    b continueRightCheck
+
+collisionRightBound:    
+    add x13, x13, 64 // Le sumo ambos borde para ir al pixel que sigue inmediatamente en la fila de abajo
+    cmp x18, x13
+    blt collisionDetected1
+
+    sub x13, x13, 64
     
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne rightBoundCheck
+
+ continueRightCheck:
+
     mov x23, 0
     mov x22, 16
     mov x21, 16
