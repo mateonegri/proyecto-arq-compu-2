@@ -119,21 +119,3 @@ ARRAY_START:
 	.word 0
 	.word 0
 
-MANZANA_POS:
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-
-

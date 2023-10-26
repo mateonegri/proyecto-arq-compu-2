@@ -24,8 +24,8 @@ app:
 
 
   	// Configuro GPIO 2 y 3 como Output (001 6-8 y 9-11)
-	mov x21,#0x240
-    str w21,[x29] // (direccion base)
+	// mov x21,#0x240
+    // str w21,[x20, GPIO_GPFSEL1] // (direccion base)
 
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
@@ -68,7 +68,9 @@ loopGame:
 
     bl desplazarPosicion
 
-    bl checkAppleCollision
+    // bl checkAppleCollision
+
+    mov x21, 0
 
     cmp x21, 1
     beq extendSnake
@@ -260,6 +262,8 @@ derecha:
 
 test:
 
+    mov w3, 0x001F
+
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
 	mov x22,512         	// Tamaño en Y
 loop6:
@@ -272,7 +276,7 @@ loop10:
 	sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,loop6	  	// Si no es la última fila, saltar
 
-    ret
+    b endGame
 
 desplazarPosicion:
 
@@ -609,13 +613,14 @@ checkBorderCollision:
 
     cmp x17, x13     // Si la cabeza de la snake < que el minimo del tablero --> choco con el borde superior
     blt collisionDetected1
-
+    
 leftBoundCheck:
 
     mov x18, x17
     add x18, x18, 96
     cmp x18, x13
-    beq collisionDetected1
+    // beq collisionDetected1
+    beq test
 
     add x13, x13, 1024
     add x23, x23, 1
@@ -654,12 +659,12 @@ rightBoundCheck:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
-    mov x22, 10240      // Le sumo 10240 para irme al ultimo punto del tablero
+    mov x22, 491520      // Le sumo 491520 (48*1024*10) para irme al ultimo punto del tablero
     add x13, x13, x22 
 
     cmp x17, x13
     bge collisionDetected1
-
+    
     mov x21, 0
     b return1
 
