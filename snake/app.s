@@ -50,6 +50,8 @@ app:
 
     bl pintarSerpienteInicio
 
+    bl inicializarManzanas
+    
     mov x22, 16
     mov x21, 16
     lsl x22, x22, 9
@@ -58,19 +60,20 @@ app:
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
     add x11, x13, 0
 
-    // bl dibujarManzana
+    bl dibujarManzana
 
     mov x6, 0  // x6 nos dice la direccion actual de la serpiente
 
 loopGame: 
 
+
     bl actualizarDireccion
 
     bl desplazarPosicion
 
-    // bl checkAppleCollision
-
     mov x21, 0
+
+    bl checkAppleCollision
 
     cmp x21, 1
     beq extendSnake
@@ -374,6 +377,11 @@ checkAppleCollision:
 
     mov x28, x30  // Preserve the return address
     ldr x17, [x19]  // Load the current position of the snake's head
+    ldr x20, =MANZANA_START
+    mov x15, x2
+    sub x15, x15, 1
+    lsl x15, x15, 3
+    ldr x9, [x20, x15] 
     cmp x17, x9  // Compare head position with apple position
     beq collisionDetected5  // If they are the same, a collision occurred
     mov x21, 0  // Set a flag for no collision
@@ -707,6 +715,182 @@ collisionDetected1:
 return1:
 
     br x28
+
+dibujarManzana:  // Esto anda mal
+
+    str x30, [sp, #-8]!
+
+    add x11,
+
+    bl diamante
+
+    ldr x30, [sp], 8
+
+    ret
+// funcion que le paso como parametro la direccion inicial de framebuffer en x11, y 
+// dibuja el cuadrado a partir de esa direccion. Los cuadrados son de 48x48. Cuando
+// termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
+
+
+// cada cuadrado de la manzana tiene 6x6 posiciones
+diamante: 
+    str x30, [sp, #-8]!
+
+    add x11, x11, 42 // le sume a x11 10 pq quiero q arranque 21 pos mas a la derecha, es decir 21*2 pixeles 
+    // vamos a tener dos aux q ponen el tamaño de y y x segun en q fila del diamante estamos 
+    mov x25, xzr // flag 
+    mov x27, xzr // flag 
+    mov x23, 6 
+    mov x22, 6   // Tamaño en Y 
+dibujarejeY:
+    add X21, x23, xzr  // Tamaño en X
+dibujarejeX:
+
+    // en vez de decrementar el tam en x e y vamos a tener 2 auxiliares en x23 y x24 
+    sturh w3,[x11]	   	// Setear el color del pixel N
+    add x11,x11,2	   	// Siguiente pixel
+    sub x21,x21,1	   		// Decrementar el contador X
+    cbnz x21,dibujarejeX	   	// Si no terminó la fila, saltar 
+    // ahora ya termino la fila --> tiene q hacerlo en y 6 veces 
+    sub x11, x11, 12    // Regresar x11 al inicio de la fila, recordemos q tiene 6 pixeles q mide 2 cada uno 
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,dibujarejeY	  	// Si no es la última fila, saltar
+   
+    sub 26, x27, 4 
+    cbz x26, finpintarmanzana // quiere decir q ya pinto la ultima, sino sigue 
+
+    sub x26, x25, 2 
+    cbz x26, fila3 // quiere decir q ya paso por esto 
+    sub x26, x25, 3 
+    cbz x26, fila4 // quiere decir ya paso por fila3 
+    sub x26, x25, 4
+    cbz x26, fila3d
+    sub x26, x25, 5 
+    cbz x26, fila2d
+    sub x26, x25, 6 
+    cbz x26, fila1d
+
+    fila2:
+
+    // se supone q ya pinto primer cuadradito, en la sig fila tiene q pintar 3 de estos --> en x aumentamos el contador por 3 y en y queda igual
+    mov X23, 18 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 24    // Regresar x11 dos cuadraditos + atras (cada cuadrado 12 pix)
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    // tengo q dejarle saber q ya ice esta fila --> flag 
+    mov x25, 2 
+    b dibujarejeY
+
+    fila3: 
+    mov x23, 30 
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 48 
+    add x11, x11, 1024 
+    mov x25, 3
+    b dibujarejeY
+
+
+    fila4: 
+    mov X23, 48 // Tamaño en X --> voy a pintar toda esta fila 
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 72    // Regresar al principio de la fila (21*2 + 18*2)
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    // despues de este tiene q hacer nuevamente la fila 2 
+    mov x25, 4 // entonces va a entrar a fila 3 --> no da cero 
+    //mov x27, 1 // otra flag para indicar q ya paso por aca 
+    b dibujarejeY
+
+
+    fila3d: 
+    mov x23, 30 
+    mov x22, 6   // Tamaño en Y 
+    sub x11, x11, 72 
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x25, 5
+    b dibujarejeY
+
+    fila2d:
+    mov X23, 18 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 48
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x25, 6
+    b dibujarejeY
+
+    fila1d: 
+    mov X23, 6 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 24 // me voy dos cuadrados atras
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x27, 4 // para saber q ya termine de pintar la manzana 
+    b dibujarejeY
+
+    finpintarmanzana:
+
+    ldr x30, [sp], 8
+
+    ret
+
+inicializarManzanas:
+     
+     str x30, [sp, #-8]!
+
+    // vamos a guardar 15 posiciones random en la pantalla 
+    // podriamos aprovechar q ya esta hecho y usar a partir del x13 ya cargado 
+    mov x2, 208
+    mov x1, 16
+    lsl x2, x2, 9
+    add x13, x2, x1
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    add x3, x13, 96 // guarde en x3 la pos de inicio del primer cuadrado 
+    // no se cual va a ser el registro de inicio de este array --> supongamos q x20 
+    ldr x20, =MANZANA_START // este es otro array unicamente para las posicones de la manzana 
+    str x3, [x20] // listo guardamos la primer pos random 
+     
+    // vamos a calcular otra pos en la misma fila q la de recien pero guardarla en el array mas adelante asi no es tan facil
+    add x3, x3, 480 
+    str x3, [x20, #8]
+    add x3, x3, 48288
+    sub x3, x3, 480
+    str x3, [x20, #16]
+    add x3, x3, 576
+    str x3, [x20, #24]
+    add x3, x3, 48288
+    sub x3, x3, 96
+    str x3, [x20, #32]
+    sub x3, x3, 192
+    str x3, [x20, #40]
+    add x3, x3, 48288
+    add x3, x3, 384
+    str x3, [x20, #48]
+    add x3, x3, 192 
+    str x3, [x20, #56]
+    add x3, x3, 48288
+    sub x3, x3, 192
+    str x3, [x20, #64]
+    add x3, x3, 96
+    str x3, [x20, #72]
+    add x3, x3, 48288
+    add x3, x3, 480
+    str x3, [x20, #80]
+    sub x3, x3, 96
+    str x3, [x3, #88]
+    add x3, x3, 48288
+    add x3, x3, 288
+    str x3, [x20, #104]
+    sub x3, x3, 288
+    str x3, [x3, #112]
+    add x3, x3, 48288
+    add x3, x3, 384
+    str x3, [x3, #120]
+
+
+    ldr x30, [sp], 8
+
+    ret
 
 delay:
 	movz x21, 0x10, lsl #16
