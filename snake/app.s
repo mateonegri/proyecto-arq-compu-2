@@ -721,7 +721,7 @@ dibujarManzana:  // Esto anda mal
 
     str x30, [sp, #-8]!
 
-    add x11,
+    mov w3, 0xF800
 
     bl diamante
 
@@ -758,7 +758,7 @@ dibujarejeX:
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarejeY	  	// Si no es la última fila, saltar
    
-    sub 26, x27, 4 
+    sub x26, x27, 4 
     cbz x26, finpintarmanzana // quiere decir q ya pinto la ultima, sino sigue 
 
     sub x26, x25, 2 
@@ -854,37 +854,44 @@ inicializarManzanas:
     // vamos a calcular otra pos en la misma fila q la de recien pero guardarla en el array mas adelante asi no es tan facil
     add x3, x3, 480 
     str x3, [x20, #8]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     sub x3, x3, 480
     str x3, [x20, #16]
     add x3, x3, 576
     str x3, [x20, #24]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     sub x3, x3, 96
     str x3, [x20, #32]
     sub x3, x3, 192
     str x3, [x20, #40]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     add x3, x3, 384
     str x3, [x20, #48]
     add x3, x3, 192 
     str x3, [x20, #56]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     sub x3, x3, 192
     str x3, [x20, #64]
     add x3, x3, 96
     str x3, [x20, #72]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     add x3, x3, 480
     str x3, [x20, #80]
     sub x3, x3, 96
     str x3, [x3, #88]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     add x3, x3, 288
     str x3, [x20, #104]
     sub x3, x3, 288
     str x3, [x3, #112]
-    add x3, x3, 48288
+    mov x22, 48288
+    add x3, x3, x22
     add x3, x3, 384
     str x3, [x3, #120]
 
