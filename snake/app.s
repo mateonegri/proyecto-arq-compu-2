@@ -7,10 +7,10 @@
     .equ TABLERO_ANCHO, 10
     .equ TABLERO_ALTO, 10
     .equ TABLERO_OUT_RANGE, (TABLERO_ALTO * TABLERO_ANCHO) + 1
-    .equ LEFT, 0x40000
-    .equ RIGHT, 0x08000
+    .equ LEFT, 0x08000
+    .equ RIGHT, 0x20000
     .equ UP, 0x04000
-    .equ DOWN, 0x20000
+    .equ DOWN, 0x40000
        
 app:
 
@@ -335,14 +335,14 @@ continuar:
 
      movArriba:
         ldr x1, [x19]
-        mov x21, 48128
+        mov x21, 49152
         sub x1, x1, x21  // Muevo la pos de la cabeza para arriba y la guardo en el array
         str x1, [x19]
         b continuar
     
      movAbajo:
         ldr x1, [x19]
-        mov x21, 48128
+        mov x21, 49152
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
         str x1, [x19]
         b continuar
@@ -630,11 +630,11 @@ leftBoundCheck:
 
 collisionLeftBound:
 
-    sub x13, x13, 64 // Me voy al pixel inmediato del borde de arriba
+    sub x13, x13, 96 // Me voy al pixel inmediato del borde de arriba
     cmp x18, x13
     bge collisionDetected1
 
-    add x13, x13, 64 // Vuelvo el pixel a su pos original y sigo con el loop
+    add x13, x13, 96 // Vuelvo el pixel a su pos original y sigo con el loop
 
     add x13, x13, 1024
     add x23, x23, 1

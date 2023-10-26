@@ -5,7 +5,7 @@ main.elf:     file format elf64-littleaarch64
 Disassembly of section .text:
 
 0000000000000000 <FB_Init-0x14>:
-       0:	58083901 	ldr	x1, 10720 <_stack_ptr>
+       0:	58083b01 	ldr	x1, 10760 <_stack_ptr>
        4:	9100003f 	mov	sp, x1
        8:	d53800a0 	mrs	x0, mpidr_el1
        c:	f2400400 	ands	x0, x0, #0x3
@@ -16448,9 +16448,9 @@ Disassembly of section .text:
 00000000000100e0 <inputRead>:
    100e0:	52a7e414 	mov	w20, #0x3f200000            	// #1059061760
    100e4:	b9403696 	ldr	w22, [x20, #52]
-   100e8:	926e02d7 	and	x23, x22, #0x40000
-   100ec:	926f02d5 	and	x21, x22, #0x20000
-   100f0:	927102c3 	and	x3, x22, #0x8000
+   100e8:	927102d7 	and	x23, x22, #0x8000
+   100ec:	926e02d5 	and	x21, x22, #0x40000
+   100f0:	926f02c3 	and	x3, x22, #0x20000
    100f4:	927202d6 	and	x22, x22, #0x4000
    100f8:	d61f03c0 	br	x30
 
@@ -16489,7 +16489,7 @@ Disassembly of section .text:
    10158:	8b0a01ad 	add	x13, x13, x10
    1015c:	8b1f01a1 	add	x1, x13, xzr
    10160:	91060021 	add	x1, x1, #0x180
-   10164:	58002db3 	ldr	x19, 10718 <endGame+0xc>
+   10164:	58002fb3 	ldr	x19, 10758 <endGame+0x8>
    10168:	f9000261 	str	x1, [x19]
    1016c:	94000018 	bl	101cc <pintarSerpienteInicio>
    10170:	d2800216 	mov	x22, #0x10                  	// #16
@@ -16509,11 +16509,11 @@ Disassembly of section .text:
    101a0:	54001600 	b.eq	10460 <extendSnake>  // b.none
    101a4:	94000111 	bl	105e8 <checkBodyCollision>
    101a8:	f10006bf 	cmp	x21, #0x1
-   101ac:	54002b00 	b.eq	1070c <endGame>  // b.none
+   101ac:	54002d20 	b.eq	10750 <endGame>  // b.none
    101b0:	9400011f 	bl	1062c <checkBorderCollision>
    101b4:	f10006bf 	cmp	x21, #0x1
-   101b8:	54002aa0 	b.eq	1070c <endGame>  // b.none
-   101bc:	9400014e 	bl	106f4 <delay>
+   101b8:	54002cc0 	b.eq	10750 <endGame>  // b.none
+   101bc:	9400015f 	bl	10738 <delay>
    101c0:	94000011 	bl	10204 <pintarFondo>
    101c4:	94000093 	bl	10410 <pintarSerpiente>
    101c8:	17fffff2 	b	10190 <loopGame>
@@ -16624,11 +16624,11 @@ Disassembly of section .text:
 00000000000102f0 <actualizarDireccion>:
    102f0:	aa1e03fc 	mov	x28, x30
    102f4:	97ffff7b 	bl	100e0 <inputRead>
-   102f8:	d140207b 	sub	x27, x3, #0x8, lsl #12
+   102f8:	d140807b 	sub	x27, x3, #0x20, lsl #12
    102fc:	b40001db 	cbz	x27, 10334 <derecha>
-   10300:	d14102fb 	sub	x27, x23, #0x40, lsl #12
+   10300:	d14022fb 	sub	x27, x23, #0x8, lsl #12
    10304:	b40000db 	cbz	x27, 1031c <izquierda>
-   10308:	d14082bb 	sub	x27, x21, #0x20, lsl #12
+   10308:	d14102bb 	sub	x27, x21, #0x40, lsl #12
    1030c:	b400011b 	cbz	x27, 1032c <abajo>
    10310:	d14012db 	sub	x27, x22, #0x4, lsl #12
    10314:	b400009b 	cbz	x27, 10324 <arriba>
@@ -16667,7 +16667,7 @@ Disassembly of section .text:
    10358:	b5ffffb5 	cbnz	x21, 1034c <loop10>
    1035c:	d10006d6 	sub	x22, x22, #0x1
    10360:	b5ffff56 	cbnz	x22, 10348 <loop6>
-   10364:	140000ea 	b	1070c <endGame>
+   10364:	140000fb 	b	10750 <endGame>
 
 0000000000010368 <desplazarPosicion>:
    10368:	aa1e03fc 	mov	x28, x30
@@ -16715,14 +16715,14 @@ Disassembly of section .text:
 
 00000000000103e8 <movArriba>:
    103e8:	f9400261 	ldr	x1, [x19]
-   103ec:	d2978015 	mov	x21, #0xbc00                	// #48128
+   103ec:	d2980015 	mov	x21, #0xc000                	// #49152
    103f0:	cb150021 	sub	x1, x1, x21
    103f4:	f9000261 	str	x1, [x19]
    103f8:	17fffff3 	b	103c4 <continuar>
 
 00000000000103fc <movAbajo>:
    103fc:	f9400261 	ldr	x1, [x19]
-   10400:	d2978015 	mov	x21, #0xbc00                	// #48128
+   10400:	d2980015 	mov	x21, #0xc000                	// #49152
    10404:	8b150021 	add	x1, x1, x21
    10408:	f9000261 	str	x1, [x19]
    1040c:	17ffffee 	b	103c4 <continuar>
@@ -16763,7 +16763,7 @@ Disassembly of section .text:
    10460:	aa1e03fc 	mov	x28, x30
    10464:	91000442 	add	x2, x2, #0x1
    10468:	f1003c5f 	cmp	x2, #0xf
-   1046c:	540014c0 	b.eq	10704 <win>  // b.none
+   1046c:	540016e0 	b.eq	10748 <win>  // b.none
    10470:	aa0203ef 	mov	x15, x2
    10474:	d37df1ef 	lsl	x15, x15, #3
    10478:	d10021ef 	sub	x15, x15, #0x8
@@ -16916,75 +16916,99 @@ Disassembly of section .text:
    1064c:	8b0a01ad 	add	x13, x13, x10
    10650:	d2800017 	mov	x23, #0x0                   	// #0
    10654:	eb0d023f 	cmp	x17, x13
-   10658:	540004ab 	b.lt	106ec <collisionDetected1>  // b.tstop
+   10658:	540006cb 	b.lt	10730 <collisionDetected1>  // b.tstop
 
 000000000001065c <leftBoundCheck>:
    1065c:	aa1103f2 	mov	x18, x17
-   10660:	91018252 	add	x18, x18, #0x60
-   10664:	eb0d025f 	cmp	x18, x13
-   10668:	54ffe6a0 	b.eq	1033c <test>  // b.none
-   1066c:	911001ad 	add	x13, x13, #0x400
-   10670:	910006f7 	add	x23, x23, #0x1
-   10674:	f1077eff 	cmp	x23, #0x1df
-   10678:	54ffff21 	b.ne	1065c <leftBoundCheck>  // b.any
-   1067c:	d2800017 	mov	x23, #0x0                   	// #0
-   10680:	d2800216 	mov	x22, #0x10                  	// #16
-   10684:	d2800215 	mov	x21, #0x10                  	// #16
-   10688:	d377dad6 	lsl	x22, x22, #9
-   1068c:	8b1502cd 	add	x13, x22, x21
-   10690:	d37ff9ad 	lsl	x13, x13, #1
-   10694:	8b0a01ad 	add	x13, x13, x10
-   10698:	910f01ad 	add	x13, x13, #0x3c0
+   10660:	eb0d025f 	cmp	x18, x13
+   10664:	540000cb 	b.lt	1067c <collisionLeftBound>  // b.tstop
+   10668:	911001ad 	add	x13, x13, #0x400
+   1066c:	910006f7 	add	x23, x23, #0x1
+   10670:	f1077eff 	cmp	x23, #0x1df
+   10674:	54ffff41 	b.ne	1065c <leftBoundCheck>  // b.any
+   10678:	14000009 	b	1069c <continueLeftCheck>
 
-000000000001069c <rightBoundCheck>:
-   1069c:	aa1103f2 	mov	x18, x17
-   106a0:	eb0d025f 	cmp	x18, x13
-   106a4:	54000240 	b.eq	106ec <collisionDetected1>  // b.none
-   106a8:	911001ad 	add	x13, x13, #0x400
-   106ac:	910006f7 	add	x23, x23, #0x1
-   106b0:	f1077eff 	cmp	x23, #0x1df
-   106b4:	54ffff41 	b.ne	1069c <rightBoundCheck>  // b.any
-   106b8:	d2800017 	mov	x23, #0x0                   	// #0
-   106bc:	d2800216 	mov	x22, #0x10                  	// #16
-   106c0:	d2800215 	mov	x21, #0x10                  	// #16
-   106c4:	d377dad6 	lsl	x22, x22, #9
-   106c8:	8b1502cd 	add	x13, x22, x21
-   106cc:	d37ff9ad 	lsl	x13, x13, #1
-   106d0:	8b0a01ad 	add	x13, x13, x10
-   106d4:	b2710ff6 	mov	x22, #0x78000               	// #491520
-   106d8:	8b1601ad 	add	x13, x13, x22
-   106dc:	eb0d023f 	cmp	x17, x13
-   106e0:	54ffe2ea 	b.ge	1033c <test>  // b.tcont
-   106e4:	d2800015 	mov	x21, #0x0                   	// #0
-   106e8:	14000002 	b	106f0 <return1>
+000000000001067c <collisionLeftBound>:
+   1067c:	d10181ad 	sub	x13, x13, #0x60
+   10680:	eb0d025f 	cmp	x18, x13
+   10684:	5400056a 	b.ge	10730 <collisionDetected1>  // b.tcont
+   10688:	910181ad 	add	x13, x13, #0x60
+   1068c:	911001ad 	add	x13, x13, #0x400
+   10690:	910006f7 	add	x23, x23, #0x1
+   10694:	f1077eff 	cmp	x23, #0x1df
+   10698:	54fffe21 	b.ne	1065c <leftBoundCheck>  // b.any
 
-00000000000106ec <collisionDetected1>:
-   106ec:	d2800035 	mov	x21, #0x1                   	// #1
+000000000001069c <continueLeftCheck>:
+   1069c:	d2800017 	mov	x23, #0x0                   	// #0
+   106a0:	d2800216 	mov	x22, #0x10                  	// #16
+   106a4:	d2800215 	mov	x21, #0x10                  	// #16
+   106a8:	d377dad6 	lsl	x22, x22, #9
+   106ac:	8b1502cd 	add	x13, x22, x21
+   106b0:	d37ff9ad 	lsl	x13, x13, #1
+   106b4:	8b0a01ad 	add	x13, x13, x10
+   106b8:	910f01ad 	add	x13, x13, #0x3c0
 
-00000000000106f0 <return1>:
-   106f0:	d61f0380 	br	x28
+00000000000106bc <rightBoundCheck>:
+   106bc:	aa1103f2 	mov	x18, x17
+   106c0:	eb0d025f 	cmp	x18, x13
+   106c4:	540000ca 	b.ge	106dc <collisionRightBound>  // b.tcont
+   106c8:	911001ad 	add	x13, x13, #0x400
+   106cc:	910006f7 	add	x23, x23, #0x1
+   106d0:	f1077eff 	cmp	x23, #0x1df
+   106d4:	54ffff41 	b.ne	106bc <rightBoundCheck>  // b.any
+   106d8:	14000009 	b	106fc <continueRightCheck>
 
-00000000000106f4 <delay>:
-   106f4:	d2a00215 	mov	x21, #0x100000              	// #1048576
+00000000000106dc <collisionRightBound>:
+   106dc:	910101ad 	add	x13, x13, #0x40
+   106e0:	eb0d025f 	cmp	x18, x13
+   106e4:	5400026b 	b.lt	10730 <collisionDetected1>  // b.tstop
+   106e8:	d10101ad 	sub	x13, x13, #0x40
+   106ec:	911001ad 	add	x13, x13, #0x400
+   106f0:	910006f7 	add	x23, x23, #0x1
+   106f4:	f1077eff 	cmp	x23, #0x1df
+   106f8:	54fffe21 	b.ne	106bc <rightBoundCheck>  // b.any
 
-00000000000106f8 <delay1>:
-   106f8:	d10006b5 	sub	x21, x21, #0x1
-   106fc:	b5fffff5 	cbnz	x21, 106f8 <delay1>
-   10700:	d65f03c0 	ret
+00000000000106fc <continueRightCheck>:
+   106fc:	d2800017 	mov	x23, #0x0                   	// #0
+   10700:	d2800216 	mov	x22, #0x10                  	// #16
+   10704:	d2800215 	mov	x21, #0x10                  	// #16
+   10708:	d377dad6 	lsl	x22, x22, #9
+   1070c:	8b1502cd 	add	x13, x22, x21
+   10710:	d37ff9ad 	lsl	x13, x13, #1
+   10714:	8b0a01ad 	add	x13, x13, x10
+   10718:	b2710ff6 	mov	x22, #0x78000               	// #491520
+   1071c:	8b1601ad 	add	x13, x13, x22
+   10720:	eb0d023f 	cmp	x17, x13
+   10724:	5400006a 	b.ge	10730 <collisionDetected1>  // b.tcont
+   10728:	d2800015 	mov	x21, #0x0                   	// #0
+   1072c:	14000002 	b	10734 <return1>
 
-0000000000010704 <win>:
-   10704:	97fffe87 	bl	10120 <greenOn>
-   10708:	17ffffff 	b	10704 <win>
+0000000000010730 <collisionDetected1>:
+   10730:	d2800035 	mov	x21, #0x1                   	// #1
 
-000000000001070c <endGame>:
-   1070c:	97fffe7f 	bl	10108 <redOn>
-   10710:	17ffffff 	b	1070c <endGame>
-   10714:	00000000 	udf	#0
-   10718:	00010088 	.inst	0x00010088 ; undefined
-   1071c:	00000000 	udf	#0
+0000000000010734 <return1>:
+   10734:	d61f0380 	br	x28
+
+0000000000010738 <delay>:
+   10738:	d2a00215 	mov	x21, #0x100000              	// #1048576
+
+000000000001073c <delay1>:
+   1073c:	d10006b5 	sub	x21, x21, #0x1
+   10740:	b5fffff5 	cbnz	x21, 1073c <delay1>
+   10744:	d65f03c0 	ret
+
+0000000000010748 <win>:
+   10748:	97fffe76 	bl	10120 <greenOn>
+   1074c:	17ffffff 	b	10748 <win>
+
+0000000000010750 <endGame>:
+   10750:	97fffe6e 	bl	10108 <redOn>
+   10754:	17ffffff 	b	10750 <endGame>
+   10758:	00010088 	.inst	0x00010088 ; undefined
+   1075c:	00000000 	udf	#0
 
 Disassembly of section .data:
 
-0000000000010720 <_stack_ptr>:
-   10720:	00400000 	.inst	0x00400000 ; undefined
-   10724:	00000000 	udf	#0
+0000000000010760 <_stack_ptr>:
+   10760:	00400000 	.inst	0x00400000 ; undefined
+   10764:	00000000 	udf	#0
