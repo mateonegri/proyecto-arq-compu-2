@@ -21,6 +21,12 @@ app:
 	// Configurar GPIO 17 como input:
 	mov X21, #0
 	str w21,[x20,GPIO_GPFSEL1] 		// Coloco 0 en Function Select 1 (base + 4)  
+
+
+  	// Configuro GPIO 2 y 3 como Output (001 6-8 y 9-11)
+	mov x21,#0x240
+    str w21,[x29] // (direccion base)
+
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
 	
@@ -42,14 +48,19 @@ app:
     ldr x19, =ARRAY_START
     str x1, [x19]
 
-    // str x1, [sp]  
-    // str x1, [sp, #-8]
-
     bl pintarSerpienteInicio
 
-   // bl dibujarManzanaInicio
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+    add x11, x13, 0
 
-   mov x18, 0
+    // bl dibujarManzana
+
+    mov x6, 0  // x6 nos dice la direccion actual de la serpiente
 
 loopGame: 
 
@@ -79,16 +90,6 @@ loopGame:
     bl pintarSerpiente
 
     b loopGame
-
-dibujarManzanaInicio:  // Esto anda mal
-    mov w3, 0xF800
-    mov x5, 6114  // numero random para aparecer la primera manzana
-    add x11, x10, x5
-    mov x9, x11  // Tengo en x9 la pos de la manzana
-
-    bl rectangulo
-
-    ret
 
 pintarSerpienteInicio: 
     mov x28, x30
@@ -237,22 +238,22 @@ return:
     br x28
 
 izquierda:
-    mov x18, 1
+    mov x6, 1
 
     b return
 
 arriba:
-    mov x18, 2
+    mov x6, 2
 
     b return
 
 abajo:
-    mov x18, 3
+    mov x6, 3
 
     b return
 
 derecha:
-    mov x18, 0
+    mov x6, 0
 
     b return
 
@@ -302,13 +303,13 @@ desplazarPosicion:
     b for
 forCont:
 
-    cmp x18, 0
+    cmp x6, 0
     beq movDerecha
-    cmp x18, 1
+    cmp x6, 1
     beq movIzquierda
-    cmp x18, 2
+    cmp x6, 2
     beq movArriba
-    cmp x18, 3
+    cmp x6, 3
     beq movAbajo
 
 continuar:
@@ -505,7 +506,7 @@ leftBoundCheck2:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
-    add x13, x13, 958 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
+    add x13, x13, 960 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
 
 rightBoundCheck2:
 
@@ -528,8 +529,11 @@ rightBoundCheck2:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
+    mov x22, 10240      // Le sumo 10240 para irme al ultimo punto del tablero
+    add x13, x13, x22 
+
     cmp x18, x13
-    bgt collisionDetected2
+    bge collisionDetected2
 
     mov x21, 0
 
@@ -552,10 +556,10 @@ checkBodyCollision:
 
     mov x28, x30
     mov x15, x2  // Load the length of the snake
-    sub x15, x15, 1
-    ldr x16, [x19]  // Load the current position of the snake's head
     cmp x15, 2  // If the snake length is 0, no collision
     beq noCollision
+    sub x15, x15, 1
+    ldr x16, [x19]  // Load the current position of the snake's head
 
     mov x22, 8
 
@@ -627,7 +631,7 @@ leftBoundCheck:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
-    add x13, x13, 958 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
+    add x13, x13, 960 // Le sumo 960 ( = 96*10) para irme a la direccion del primer punto del borde derecho
 
 rightBoundCheck:
 
@@ -650,8 +654,11 @@ rightBoundCheck:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
+    mov x22, 10240      // Le sumo 10240 para irme al ultimo punto del tablero
+    add x13, x13, x22 
+
     cmp x17, x13
-    bgt collisionDetected1
+    bge collisionDetected1
 
     mov x21, 0
     b return1
@@ -674,9 +681,14 @@ delay1:
 
 win:
 
+    bl greenOn
+    b win
+    
     // Prender led verdes y terminar juego
 
 endGame:
+    bl redOn
+    b endGame
 
     // Prender los led rojos y terminar el juego
 

@@ -1,5 +1,9 @@
 //--------DEFINICIÓN DE FUNCIONES-----------//
     .global inputRead    
+
+	.equ GPIO_GPSET0, 	0x1C
+	.equ GPIO_GPCLR0, 	0x28
+
 	//DESCRIPCION: Lee el boton en el GPIO17. 
 //------FIN DEFINICION DE FUNCIONES-------//
 
@@ -12,3 +16,24 @@ inputRead:
 	and x22,x22,0x04000
 
     br x30 		//Vuelvo a la instruccion link
+
+redOff:
+  mov w20,#0b1000
+  str w20,[x29,GPIO_GPSET0]
+  br x30
+
+redOn:
+  mov w20,#0b1000
+  str w20,[x29,GPIO_GPCLR0]
+  br x30
+
+greenOff:
+  mov w20,#0b0100
+  str w20,[x29,GPIO_GPSET0]
+  br x30
+
+greenOn:
+  mov w20,#0b0100
+  str w20,[x29,GPIO_GPCLR0]
+  br x30
+
