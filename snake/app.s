@@ -76,7 +76,8 @@ loopGame:
     bl checkAppleCollision
 
     cmp x21, 1
-    beq extendSnake
+    // beq extendSnake
+    beq test
 
     bl checkBodyCollision
 
