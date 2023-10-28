@@ -76,11 +76,6 @@ loopGame:
 
     mov x21, 0
 
-    bl checkAppleCollision
-
-    cmp x21, 1
-    beq extendSnake
-
     bl checkBodyCollision
 
     cmp x21, 1
@@ -90,6 +85,11 @@ loopGame:
 
     cmp x21, 1
     beq endGame
+
+    bl checkAppleCollision
+
+    cmp x21, 1
+    beq extendSnake
 
     bl delay
 
