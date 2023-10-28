@@ -24,10 +24,8 @@ app:
 
 
   	// Configuro GPIO 2 y 3 como Output (001 6-8 y 9-11)
-	// mov x21,#0x240
-    // str w21,[x20, GPIO_GPFSEL1] // (direccion base)
-
-    ldr x14, =MANZANA_START // Array para posiciones de la manzana
+	mov x21,#0x240
+    str w21,[x20, GPIO_GPFSEL1] // (direccion base)
 
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
@@ -73,11 +71,10 @@ loopGame:
 
     mov x21, 0
 
-    bl checkAppleCollision
+    // bl checkAppleCollision
 
     cmp x21, 1
-    // beq extendSnake
-    beq test
+    beq extendSnake
 
     bl checkBodyCollision
 
@@ -378,10 +375,11 @@ checkAppleCollision:
 
     mov x28, x30  // Preserve the return address
     ldr x17, [x19]  // Load the current position of the snake's head
+    // ldr x20, =MANZANA_START
     mov x15, x2
     sub x15, x15, 1
     lsl x15, x15, 3
-    // ldr x9, [x20, x15] 
+    // ldr x9, [x20] 
     cmp x17, x9  // Compare head position with apple position
     beq collisionDetected5  // If they are the same, a collision occurred
     mov x21, 0  // Set a flag for no collision
