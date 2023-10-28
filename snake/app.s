@@ -60,6 +60,9 @@ app:
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
     add x11, x13, 0
 
+    ldr x4, =MANZANA_START
+    str x11, [x4]
+
     bl dibujarManzana
 
     mov x6, 0  // x6 nos dice la direccion actual de la serpiente
@@ -73,7 +76,7 @@ loopGame:
 
     mov x21, 0
 
-    // bl checkAppleCollision
+    bl checkAppleCollision
 
     cmp x21, 1
     beq extendSnake
@@ -387,25 +390,24 @@ finishPaint:
 
 checkAppleCollision:
 
-    mov x28, x30  // Preserve the return address
-    ldr x17, [x19]  // Load the current position of the snake's head
-    // ldr x20, =MANZANA_START
+    mov x28, x30  
+    ldr x17, [x19]  // Traigo la cabeza de la serpiente
     mov x15, x2
     sub x15, x15, 1
     lsl x15, x15, 3
-    // ldr x9, [x20] 
-    cmp x17, x9  // Compare head position with apple position
-    beq collisionDetected5  // If they are the same, a collision occurred
-    mov x21, 0  // Set a flag for no collision
+    ldr x9, [x4] 
+    cmp x17, x9  // Comparo la cabeza con la manzana
+    beq collisionDetected5  // Si son iguales, colision
+    mov x21, 0  
     b return2
 
 collisionDetected5:
 
-    mov x21, 1  // Set a flag for collision
+    mov x21, 1  
 
 return2:
 
-    br x28  // Return to the calling function
+    br x28  
 
 extendSnake:
 
@@ -730,42 +732,10 @@ return1:
 
 dibujarManzana: 
 
-// Vamos a dibujar un triangulo.
-
     mov x28, x30
 
     mov w3, 0xF800
-
-    mov x22, 48 // Tamaño en y
-    mov x21, 1 // Tamaño en X, pero es variable. Se le van sumando 2 cada vez que baja de fila. 
-    mov x14, 1 // Flag para checkear primera vuelta
-    
-dibujarTrianguloY:
-    cbnz x14, primeraVuelta
-    add x21, x16, 0
-    add x21, x21, 2 // Le sumo 2 al tamaño en X, cada vez que bajo de fila
-    add x16, x21, 0 // Voy guardando la sumatoria de x21
-    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
-    add x15, x21, xzr
-    sub x15, x15, 1 // Le resto al tam en X 1 para que me quede par. Este es el numero de pixeles que debo retroceder para empezar a pintar
-    lsl x15, x15, 1 // Multiplico el tamaño por 2, porque cada pixel ocupa dos espacios en memoria
-
-    sub x11, x11, x15
-
-dibujarTrianguloX:
-    sturh w3,[x11]	   	// Setear el color del pixel N
-	add x11,x11,2	   	// Siguiente pixel
-	sub x21,x21,1	   		// Decrementar el contador X
-	cbnz x21,dibujarTrianguloX	   	// Si no terminó la fila, saltar 
-    lsl x23, x16, 1 // Hago tamX * 2
-    add x23, x23, 48 // Le sumo los 48 que sume antes de empezar
-    sub x11, x11, x23    // Regresar x11 al inicio de la fila
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    sub x22,x22,1	   		// Decrementar el contador Y
-	cbnz x22,dibujarTrianguloY	  	// Si no es la última fila, saltar
-  
-    ret
-
+    bl rectangulo
 
     br x28
 
