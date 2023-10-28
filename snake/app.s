@@ -90,9 +90,19 @@ loopGame:
 
     bl delay
 
-    bl pintarFondo
+    bl pintarTablero
 
     bl pintarSerpiente
+
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+    add x11, x13, 0
+
+    bl dibujarManzana
 
     b loopGame
 
@@ -136,6 +146,8 @@ loop2:
 
 // Ya pinte toda la pantalla de un color, ahora cambio la direccion base, para ir pintando los cuadrados. 
 
+pintarTablero:
+    mov x28, x30
     mov w3, 0xFFFF // Cambio de color a BLANCO
     add x10, x0, 0 // X10 contiene la dirección base del framebuffer
     mov x7, 10 // Contador cuadrados por fila
@@ -716,106 +728,51 @@ return1:
 
     br x28
 
-dibujarManzana:  // Esto anda mal
+dibujarManzana: 
+
+// Vamos a dibujar un triangulo.
 
     mov x28, x30
 
-    add x11, x11, 42 // le sume a x11 10 pq quiero q arranque 21 pos mas a la derecha, es decir 21*2 pixeles 
-    // vamos a tener dos aux q ponen el tamaño de y y x segun en q fila del diamante estamos 
+    mov w3, 0xF800
 
-    add x9, x11, 0
+    mov x22, 48 // Tamaño en y
+    mov x21, 1 // Tamaño en X, pero es variable. Se le van sumando 2 cada vez que baja de fila. 
+    mov x14, 1 // Flag para checkear primera vuelta
+    
+dibujarTrianguloY:
+    cbnz x14, primeraVuelta
+    add x21, x16, 0
+    add x21, x21, 2 // Le sumo 2 al tamaño en X, cada vez que bajo de fila
+    add x16, x21, 0 // Voy guardando la sumatoria de x21
+    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
+    add x15, x21, xzr
+    sub x15, x15, 1 // Le resto al tam en X 1 para que me quede par. Este es el numero de pixeles que debo retroceder para empezar a pintar
+    lsl x15, x15, 1 // Multiplico el tamaño por 2, porque cada pixel ocupa dos espacios en memoria
 
-    mov x25, xzr // flag 
-    mov x27, xzr // flag 
-    mov x23, 6 
-    mov x22, 6   // Tamaño en Y 
-dibujarejeY:
-    add X21, x23, xzr  // Tamaño en X
-dibujarejeX:
+    sub x11, x11, x15
 
-    // en vez de decrementar el tam en x e y vamos a tener 2 auxiliares en x23 y x24 
+dibujarTrianguloX:
     sturh w3,[x11]	   	// Setear el color del pixel N
-    add x11,x11,2	   	// Siguiente pixel
-    sub x21,x21,1	   		// Decrementar el contador X
-    cbnz x21,dibujarejeX	   	// Si no terminó la fila, saltar 
-    // ahora ya termino la fila --> tiene q hacerlo en y 6 veces 
-    sub x11, x11, 12    // Regresar x11 al inicio de la fila, recordemos q tiene 6 pixeles q mide 2 cada uno 
+	add x11,x11,2	   	// Siguiente pixel
+	sub x21,x21,1	   		// Decrementar el contador X
+	cbnz x21,dibujarTrianguloX	   	// Si no terminó la fila, saltar 
+    lsl x23, x16, 1 // Hago tamX * 2
+    add x23, x23, 48 // Le sumo los 48 que sume antes de empezar
+    sub x11, x11, x23    // Regresar x11 al inicio de la fila
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
-	cbnz x22,dibujarejeY	  	// Si no es la última fila, saltar
-   
-    sub x26, x27, 4 
-    cbz x26, finpintarmanzana // quiere decir q ya pinto la ultima, sino sigue 
+	cbnz x22,dibujarTrianguloY	  	// Si no es la última fila, saltar
+  
+    ret
 
-    sub x26, x25, 2 
-    cbz x26, fila3 // quiere decir q ya paso por esto 
-    sub x26, x25, 3 
-    cbz x26, fila4 // quiere decir ya paso por fila3 
-    sub x26, x25, 4
-    cbz x26, fila3d
-    sub x26, x25, 5 
-    cbz x26, fila2d
-    sub x26, x25, 6 
-    cbz x26, fila1d
-
-    fila2:
-
-    // se supone q ya pinto primer cuadradito, en la sig fila tiene q pintar 3 de estos --> en x aumentamos el contador por 3 y en y queda igual
-    mov X23, 18 // Tamaño en X
-    mov x22, 6   // Tamaño en Y
-    sub x11, x11, 24    // Regresar x11 dos cuadraditos + atras (cada cuadrado 12 pix)
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    // tengo q dejarle saber q ya ice esta fila --> flag 
-    mov x25, 2 
-    b dibujarejeY
-
-    fila3: 
-    mov x23, 30 
-    mov x22, 6   // Tamaño en Y
-    sub x11, x11, 48 
-    add x11, x11, 1024 
-    mov x25, 3
-    b dibujarejeY
-
-
-    fila4: 
-    mov X23, 48 // Tamaño en X --> voy a pintar toda esta fila 
-    mov x22, 6   // Tamaño en Y
-    sub x11, x11, 72    // Regresar al principio de la fila (21*2 + 18*2)
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    // despues de este tiene q hacer nuevamente la fila 2 
-    mov x25, 4 // entonces va a entrar a fila 3 --> no da cero 
-    //mov x27, 1 // otra flag para indicar q ya paso por aca 
-    b dibujarejeY
-
-
-    fila3d: 
-    mov x23, 30 
-    mov x22, 6   // Tamaño en Y 
-    sub x11, x11, 72 
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    mov x25, 5
-    b dibujarejeY
-
-    fila2d:
-    mov X23, 18 // Tamaño en X
-    mov x22, 6   // Tamaño en Y
-    sub x11, x11, 48
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    mov x25, 6
-    b dibujarejeY
-
-    fila1d: 
-    mov X23, 6 // Tamaño en X
-    mov x22, 6   // Tamaño en Y
-    sub x11, x11, 24 // me voy dos cuadrados atras
-    add x11, x11, 1024  // Avanzar a la siguiente fila
-    mov x27, 4 // para saber q ya termine de pintar la manzana 
-    b dibujarejeY
-
-    finpintarmanzana:
 
     br x28
+
+primeraVuelta:
+    mov x14,0
+    add x16, x21, 0
+    b dibujarTrianguloX
 
 delay:
 	movz x21, 0x10, lsl #16
