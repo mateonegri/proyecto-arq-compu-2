@@ -52,16 +52,19 @@ app:
 
     add x10, x0, 0		// X10 contiene la dirección base del framebuffer
     
-    mov x22, 16
+    mov x22, 208
     mov x21, 16
     lsl x22, x22, 9
     add x13, x22, x21
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
     add x11, x13, 0
+    add x11, x11, 576
 
     // ldr x4, =MANZANA_START
     // str x11, [x4]
+
+    add x4, x11, 0
 
     bl dibujarManzana
 
@@ -69,27 +72,42 @@ app:
 
 loopGame: 
 
-
     bl actualizarDireccion
+
+    mov w3, 0x001F
+
+    cmp x4, 1
+    beq test
+
+    mov x15, x2
+    lsl x15, x15, 3
+    sub x15, x15, 8
+
+    ldr x8, [x19, x15]  // Traigo el valor de la cola
 
     bl desplazarPosicion
 
     mov x21, 0
 
-    bl checkAppleCollision
-
-    cmp x21, 1
-    beq extendSnake
-
     bl checkBodyCollision
 
     cmp x21, 1
-    beq endGame
+    // beq endGame
+    beq test
 
     bl checkBorderCollision
 
     cmp x21, 1
-    beq endGame
+    // beq endGame
+
+    mov w3, 0xF800
+
+    beq test
+    
+    bl checkAppleCollision
+
+    cmp x21, 1
+    beq extendSnake
 
     bl delay
 
@@ -306,12 +324,14 @@ desplazarPosicion:
     lsl x16, x16, 3
     sub x16, x16, 8 // x16 = Longitud*8 - 8
 
-    // En x16 tengo la longitud de la serpiente - 8, ya que la primera pos es 0. 
-    // Empiezo por la cola haciendo cambios de pos hacia adelante hasta llegar a la cabeza y calcular la nueva posicion.
-
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
+
+    mov w3, 0x07E0
+
+    cmp x2, 3
+    beq test
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
     sub x16, x16, 8 // Le resto 8 a x16 para tener la pos [i - 1]
@@ -319,6 +339,9 @@ desplazarPosicion:
     add x16, x16, 8 // Le sumo 8 para volver al offset de la pos i
     str x13, [x19, x16] // snake_posiciones[i] = snake_posiciones[i-1]
     sub x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
+
+    cmp x2, 3
+    beq test
 
     sub x15, x15, 1
 
@@ -413,22 +436,20 @@ extendSnake:
 
     mov x28, x30
 
-    ldr x17, [x19, x15]  // Traigo la ultima posicion de la serpiente
-
-    bl desplazarPosicion // Muevo toda la snake una pos mas adelante
+    mov x15, x2    // x15 = longitud de la serpeinte
+    lsl x15, x15, 3 // x15 * 8
+    sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
 
     add x2, x2, 1  // Aumento la longitud de la serpiente en 1
 
     cmp x2, 15
     beq win
 
-    mov x15, x2    // x15 = longitud de la serpeinte
-    lsl x15, x15, 3 // x15 * 8
-    sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
-    
     add x15, x15, 8  // La nueva posicion es igual a la vieja cola
 
-    str x17, [x19, x15] // Cargo la nueva posicion al array
+    str x8, [x19, x15] // Cargo la nueva posicion al array
+    
+    mov x4, 1
 
     br x28
 
