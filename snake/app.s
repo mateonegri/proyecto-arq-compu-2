@@ -49,6 +49,8 @@ app:
     str x1, [x19]
 
     bl pintarSerpienteInicio
+
+    add x10, x0, 0		// X10 contiene la dirección base del framebuffer
     
     mov x22, 16
     mov x21, 16
@@ -716,21 +718,7 @@ return1:
 
 dibujarManzana:  // Esto anda mal
 
-    str x30, [sp, #-8]!
-
-    bl diamante
-
-    ldr x30, [sp], 8
-
-    ret
-// funcion que le paso como parametro la direccion inicial de framebuffer en x11, y 
-// dibuja el cuadrado a partir de esa direccion. Los cuadrados son de 48x48. Cuando
-// termino una fila, le sumo 1024 a x11 para que baje a la siguiente y repito eso 48 veces.
-
-
-// cada cuadrado de la manzana tiene 6x6 posiciones
-diamante: 
-    str x30, [sp, #-8]!
+    mov x28, x30
 
     add x11, x11, 42 // le sume a x11 10 pq quiero q arranque 21 pos mas a la derecha, es decir 21*2 pixeles 
     // vamos a tener dos aux q ponen el tamaño de y y x segun en q fila del diamante estamos 
@@ -756,7 +744,7 @@ dibujarejeX:
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarejeY	  	// Si no es la última fila, saltar
    
-    sub 26, x27, 4 
+    sub x26, x27, 4 
     cbz x26, finpintarmanzana // quiere decir q ya pinto la ultima, sino sigue 
 
     sub x26, x25, 2 
@@ -827,9 +815,7 @@ dibujarejeX:
 
     finpintarmanzana:
 
-    ldr x30, [sp], 8
-
-    ret
+    br x28
 
 delay:
 	movz x21, 0x10, lsl #16
