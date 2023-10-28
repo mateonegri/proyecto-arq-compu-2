@@ -60,8 +60,8 @@ app:
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
     add x11, x13, 0
 
-    ldr x4, =MANZANA_START
-    str x11, [x4]
+    // ldr x4, =MANZANA_START
+    // str x11, [x4]
 
     bl dibujarManzana
 
@@ -395,8 +395,8 @@ checkAppleCollision:
     mov x15, x2
     sub x15, x15, 1
     lsl x15, x15, 3
-    ldr x9, [x4] 
-    cmp x17, x9  // Comparo la cabeza con la manzana
+    // ldr x9, [x4] 
+    cmp x17, x4  // Comparo la cabeza con la manzana
     beq collisionDetected5  // Si son iguales, colision
     mov x21, 0  
     b return2
@@ -444,7 +444,7 @@ extendSnake:
     mov x18, x17
     add x18, x18, 96 // Agregaria la nueva pos a la derecha de la cola
     cmp x18, x16
-    beq salto
+    beq salto // Si son iguales, significa que a la derecha esta ocupado
     bl checkBounds
 
     cmp x21, 0
@@ -462,7 +462,7 @@ salto:
 
 salto1:
     mov x18, x17
-    mov x25, 48128
+    mov x25, 49152
     add x18, x18, x25  // Agregaria la nuevos de la cola abajo
     cmp x18, x16    
     beq salto3
@@ -473,25 +473,28 @@ salto1:
 
 salto3:
     mov x18, x17
-    mov x25, 48128
+    mov x25, 49152
     sub x18, x18, x25
     cmp x18, x16
-    beq return4 // Agregaria la nuevo pos de la cola arriba
+    beq return5 // Agregaria la nuevo pos de la cola arriba
     bl checkBounds
 
     cmp x21, 0
     beq newPosNoCollisions
 
-    b return4
+    b return5
 
 newPosNoCollisions:
     add x15, x15, 8 // Le agrego una pos al array
     str x18, [x19, x15]
-    b return4
+    b return5
+
+return5:
+    br x28
 
 checkBounds:
 
-    str x30, [sp, #-8]!
+    mov x27, x30
 
     add x10, x0, 0 // X10 contiene la dirección base del framebuffer
 
@@ -509,44 +512,37 @@ checkBounds:
     // Ahora en x13 tengo el valor minimo para checkear limites
 
     cmp x18, x13     // Si la cabeza de la snake < que el minimo del tablero --> choco con el borde superior
-    blt collisionDetected2
-
-leftBoundCheck2:
-
-    mov x24, x18
-    add x24, x24, 96
-    cmp x24, x13
-    beq collisionDetected2
-
-    add x13, x13, 1024
-    add x23, x23, 1
-
-    cmp x23, 479
-    bne leftBoundCheck2
-
-    mov x23, 0
-    mov x22, 16
-    mov x21, 16
-    lsl x22, x22, 9
-    add x13, x22, x21
-    lsl x13, x13, 1
-    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-
-    add x13, x13, 960 // Le sumo 958 ( = 479*2) para irme a la direccion del primer punto del borde derecho
-
-rightBoundCheck2:
-
-    mov x24, x18
-    cmp x24, x13
-    beq collisionDetected2
-
-    add x13, x13, 1024
-    add x23, x23, 1
-
-    cmp x23, 479
-    bne rightBoundCheck2
-
+    blt collisionDetected4
     
+leftBoundCheck1:
+
+    cmp x18, x13
+    blt collisionLeftBound1
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne leftBoundCheck1
+
+    b continueLeftCheck1
+
+collisionLeftBound1:
+
+    sub x13, x13, 96 // Me voy al pixel inmediato del borde de arriba
+    cmp x18, x13
+    bge collisionDetected4
+
+    add x13, x13, 96 // Vuelvo el pixel a su pos original y sigo con el loop
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne leftBoundCheck1
+
+continueLeftCheck1:
+
     mov x23, 0
     mov x22, 16
     mov x21, 16
@@ -555,28 +551,60 @@ rightBoundCheck2:
     lsl x13, x13, 1
     add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
 
-    mov x22, 10240      // Le sumo 10240 para irme al ultimo punto del tablero
+    add x13, x13, 960 // Le sumo 960 ( = 96*10) para irme a la direccion del primer punto del borde derecho
+
+rightBoundCheck1:
+
+    cmp x18, x13
+    bge collisionRightBound1
+
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne rightBoundCheck1
+
+    b continueRightCheck1
+
+collisionRightBound1:    
+    add x13, x13, 64 // Le sumo ambos borde para ir al pixel que sigue inmediatamente en la fila de abajo
+    cmp x18, x13
+    blt collisionDetected4
+
+    sub x13, x13, 64
+    
+    add x13, x13, 1024
+    add x23, x23, 1
+
+    cmp x23, 479
+    bne rightBoundCheck1
+
+ continueRightCheck1:
+
+    mov x23, 0
+    mov x22, 16
+    mov x21, 16
+    lsl x22, x22, 9
+    add x13, x22, x21
+    lsl x13, x13, 1
+    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
+
+    mov x22, 491520      // Le sumo 491520 (48*1024*10) para irme al ultimo punto del tablero
     add x13, x13, x22 
 
     cmp x18, x13
-    bge collisionDetected2
-
-    mov x21, 0
-
-    ldr x30, [sp], 8
+    bge collisionDetected4
     
-    ret
+    mov x21, 0
+    b return4
 
-collisionDetected2:
+collisionDetected4:
 
     mov x21, 1
 
-    ldr x30, [sp], 8
-
-    ret
-
 return4:
-    br x28
+
+    br x27
 
 checkBodyCollision:
 
@@ -738,12 +766,6 @@ dibujarManzana:
     bl rectangulo
 
     br x28
-
-primeraVuelta:
-    mov x14,0
-    add x16, x21, 0
-    add x11, x11, 48
-    b dibujarTrianguloX
 
 delay:
 	movz x21, 0x10, lsl #16
