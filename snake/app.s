@@ -772,6 +772,7 @@ dibujarTrianguloX:
 primeraVuelta:
     mov x14,0
     add x16, x21, 0
+    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
     b dibujarTrianguloX
 
 delay:
