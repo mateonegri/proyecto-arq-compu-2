@@ -739,16 +739,17 @@ dibujarManzana:
     mov x22, 48 // Tamaño en y
     mov x21, 1 // Tamaño en X, pero es variable. Se le van sumando 2 cada vez que baja de fila. 
     mov x14, 1 // Flag para checkear primera vuelta
-    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
     
 dibujarTrianguloY:
     cbnz x14, primeraVuelta
     add x21, x16, 0
-    add x21, x21, 1 // Le sumo 2 al tamaño en X, cada vez que bajo de fila
+    add x21, x21, 2 // Le sumo 2 al tamaño en X, cada vez que bajo de fila
     add x16, x21, 0 // Voy guardando la sumatoria de x21
+    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
     add x15, x21, xzr
     sub x15, x15, 1 // Le resto al tam en X 1 para que me quede par. Este es el numero de pixeles que debo retroceder para empezar a pintar
-   
+    lsl x15, x15, 1 // Multiplico el tamaño por 2, porque cada pixel ocupa dos espacios en memoria
+
     sub x11, x11, x15
 
 dibujarTrianguloX:
@@ -756,7 +757,9 @@ dibujarTrianguloX:
 	add x11,x11,2	   	// Siguiente pixel
 	sub x21,x21,1	   		// Decrementar el contador X
 	cbnz x21,dibujarTrianguloX	   	// Si no terminó la fila, saltar 
-    sub x11, x11, x15    // Regresar x11 al inicio de la fila
+    add x23, x23, x15
+    add x23, x23, 48 // Le sumo los 48 que sume antes de empezar
+    sub x11, x11, x23    // Regresar x11 al inicio de la fila
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarTrianguloY	  	// Si no es la última fila, saltar
@@ -766,6 +769,7 @@ dibujarTrianguloX:
 primeraVuelta:
     mov x14,0
     add x16, x21, 0
+    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
     b dibujarTrianguloX
 
 delay:
