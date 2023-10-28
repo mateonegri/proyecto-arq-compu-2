@@ -27,6 +27,8 @@ app:
 	// mov x21,#0x240
     // str w21,[x20, GPIO_GPFSEL1] // (direccion base)
 
+    ldr x14, =MANZANA_START // Array para posiciones de la manzana
+
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
 	
@@ -49,8 +51,6 @@ app:
     str x1, [x19]
 
     bl pintarSerpienteInicio
-
-    bl inicializarManzanas
     
     mov x22, 16
     mov x21, 16
@@ -378,11 +378,10 @@ checkAppleCollision:
 
     mov x28, x30  // Preserve the return address
     ldr x17, [x19]  // Load the current position of the snake's head
-    ldr x20, =MANZANA_START
     mov x15, x2
     sub x15, x15, 1
     lsl x15, x15, 3
-    ldr x9, [x20, x15] 
+    // ldr x9, [x20, x15] 
     cmp x17, x9  // Compare head position with apple position
     beq collisionDetected5  // If they are the same, a collision occurred
     mov x21, 0  // Set a flag for no collision
@@ -721,8 +720,6 @@ dibujarManzana:  // Esto anda mal
 
     str x30, [sp, #-8]!
 
-    add x11,
-
     bl diamante
 
     ldr x30, [sp], 8
@@ -739,6 +736,9 @@ diamante:
 
     add x11, x11, 42 // le sume a x11 10 pq quiero q arranque 21 pos mas a la derecha, es decir 21*2 pixeles 
     // vamos a tener dos aux q ponen el tamaño de y y x segun en q fila del diamante estamos 
+
+    add x9, x11, 0
+
     mov x25, xzr // flag 
     mov x27, xzr // flag 
     mov x23, 6 
@@ -828,66 +828,6 @@ dibujarejeX:
     b dibujarejeY
 
     finpintarmanzana:
-
-    ldr x30, [sp], 8
-
-    ret
-
-inicializarManzanas:
-     
-     str x30, [sp, #-8]!
-
-    // vamos a guardar 15 posiciones random en la pantalla 
-    // podriamos aprovechar q ya esta hecho y usar a partir del x13 ya cargado 
-    mov x2, 208
-    mov x1, 16
-    lsl x2, x2, 9
-    add x13, x2, x1
-    lsl x13, x13, 1
-    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-
-    add x3, x13, 96 // guarde en x3 la pos de inicio del primer cuadrado 
-    // no se cual va a ser el registro de inicio de este array --> supongamos q x20 
-    ldr x20, =MANZANA_START // este es otro array unicamente para las posicones de la manzana 
-    str x3, [x20] // listo guardamos la primer pos random 
-     
-    // vamos a calcular otra pos en la misma fila q la de recien pero guardarla en el array mas adelante asi no es tan facil
-    add x3, x3, 480 
-    str x3, [x20, #8]
-    add x3, x3, 48288
-    sub x3, x3, 480
-    str x3, [x20, #16]
-    add x3, x3, 576
-    str x3, [x20, #24]
-    add x3, x3, 48288
-    sub x3, x3, 96
-    str x3, [x20, #32]
-    sub x3, x3, 192
-    str x3, [x20, #40]
-    add x3, x3, 48288
-    add x3, x3, 384
-    str x3, [x20, #48]
-    add x3, x3, 192 
-    str x3, [x20, #56]
-    add x3, x3, 48288
-    sub x3, x3, 192
-    str x3, [x20, #64]
-    add x3, x3, 96
-    str x3, [x20, #72]
-    add x3, x3, 48288
-    add x3, x3, 480
-    str x3, [x20, #80]
-    sub x3, x3, 96
-    str x3, [x3, #88]
-    add x3, x3, 48288
-    add x3, x3, 288
-    str x3, [x20, #104]
-    sub x3, x3, 288
-    str x3, [x3, #112]
-    add x3, x3, 48288
-    add x3, x3, 384
-    str x3, [x3, #120]
-
 
     ldr x30, [sp], 8
 
