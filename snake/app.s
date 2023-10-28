@@ -413,6 +413,10 @@ extendSnake:
 
     mov x28, x30
 
+    ldr x17, [x19, x15]  // Traigo la ultima posicion de la serpiente
+
+    bl desplazarPosicion // Muevo toda la snake una pos mas adelante
+
     add x2, x2, 1  // Aumento la longitud de la serpiente en 1
 
     cmp x2, 15
@@ -421,10 +425,6 @@ extendSnake:
     mov x15, x2    // x15 = longitud de la serpeinte
     lsl x15, x15, 3 // x15 * 8
     sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
-
-    ldr x17, [x19, x15]  // Traigo la ultima posicion de la serpiente
-
-    bl desplazarPosicion // Muevo toda la snake una pos mas adelante
     
     add x15, x15, 8  // La nueva posicion es igual a la vieja cola
 
