@@ -757,19 +757,22 @@ dibujarTrianguloX:
 	add x11,x11,2	   	// Siguiente pixel
 	sub x21,x21,1	   		// Decrementar el contador X
 	cbnz x21,dibujarTrianguloX	   	// Si no terminó la fila, saltar 
-    add x23, x23, x15
+    lsl x23, x16, 1 // Hago tamX * 2
     add x23, x23, 48 // Le sumo los 48 que sume antes de empezar
     sub x11, x11, x23    // Regresar x11 al inicio de la fila
     add x11, x11, 1024  // Avanzar a la siguiente fila
     sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,dibujarTrianguloY	  	// Si no es la última fila, saltar
+  
+    ret
+
 
     br x28
 
 primeraVuelta:
     mov x14,0
     add x16, x21, 0
-    add x11, x11, 48 // Tengo que llevar el ptr del framebuffer al medio del cuadrado para pintar
+    add x11, x11, 48
     b dibujarTrianguloX
 
 delay:
