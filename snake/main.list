@@ -5,7 +5,7 @@ main.elf:     file format elf64-littleaarch64
 Disassembly of section .text:
 
 0000000000000000 <FB_Init-0x14>:
-       0:	580841c1 	ldr	x1, 10838 <_stack_ptr>
+       0:	58084201 	ldr	x1, 10840 <_stack_ptr>
        4:	9100003f 	mov	sp, x1
        8:	d53800a0 	mrs	x0, mpidr_el1
        c:	f2400400 	ands	x0, x0, #0x3
@@ -16491,7 +16491,7 @@ Disassembly of section .text:
    10160:	8b0a01ad 	add	x13, x13, x10
    10164:	8b1f01a1 	add	x1, x13, xzr
    10168:	91060021 	add	x1, x1, #0x180
-   1016c:	58003633 	ldr	x19, 10830 <endGame+0x8>
+   1016c:	58003673 	ldr	x19, 10838 <endGame+0xc>
    10170:	f9000261 	str	x1, [x19]
    10174:	9400001f 	bl	101f0 <pintarSerpienteInicio>
    10178:	9100000a 	add	x10, x0, #0x0
@@ -16514,16 +16514,16 @@ Disassembly of section .text:
    101b4:	d2800015 	mov	x21, #0x0                   	// #0
    101b8:	940000f4 	bl	10588 <checkBodyCollision>
    101bc:	f10006bf 	cmp	x21, #0x1
-   101c0:	54003340 	b.eq	10828 <endGame>  // b.none
+   101c0:	54003360 	b.eq	1082c <endGame>  // b.none
    101c4:	9400010e 	bl	105fc <checkBorderCollision>
    101c8:	f10006bf 	cmp	x21, #0x1
-   101cc:	540032e0 	b.eq	10828 <endGame>  // b.none
+   101cc:	54003300 	b.eq	1082c <endGame>  // b.none
    101d0:	940000c3 	bl	104dc <checkAppleCollision>
    101d4:	f10006bf 	cmp	x21, #0x1
    101d8:	54001b00 	b.eq	10538 <extendSnake>  // b.none
 
 00000000000101dc <continuePlaying>:
-   101dc:	9400018d 	bl	10810 <delay>
+   101dc:	9400018e 	bl	10814 <delay>
    101e0:	9400001d 	bl	10254 <pintarTablero>
    101e4:	940000ae 	bl	1049c <pintarSerpiente>
    101e8:	94000148 	bl	10708 <dibujarManzana>
@@ -16681,7 +16681,7 @@ Disassembly of section .text:
    10380:	b5ffffb5 	cbnz	x21, 10374 <loop10>
    10384:	d10006d6 	sub	x22, x22, #0x1
    10388:	b5ffff56 	cbnz	x22, 10370 <loop6>
-   1038c:	14000127 	b	10828 <endGame>
+   1038c:	14000128 	b	1082c <endGame>
 
 0000000000010390 <desplazarPosicion>:
    10390:	aa1e03fc 	mov	x28, x30
@@ -16768,7 +16768,7 @@ Disassembly of section .text:
 
 000000000001047c <fix>:
    1047c:	91008210 	add	x16, x16, #0x20
-   10480:	d65f03c0 	ret
+   10480:	17ffffd4 	b	103d0 <fixCont>
 
 0000000000010484 <fixAdd>:
    10484:	91008210 	add	x16, x16, #0x20
@@ -16805,7 +16805,7 @@ Disassembly of section .text:
    104d0:	d61f0380 	br	x28
 
 00000000000104d4 <fixPaint>:
-   104d4:	91002210 	add	x16, x16, #0x8
+   104d4:	91008210 	add	x16, x16, #0x20
    104d8:	17fffffc 	b	104c8 <returnPaint>
 
 00000000000104dc <checkAppleCollision>:
@@ -16859,7 +16859,7 @@ Disassembly of section .text:
 
 0000000000010570 <contExtendSnake>:
    10570:	f1003c5f 	cmp	x2, #0xf
-   10574:	54001560 	b.eq	10820 <win>  // b.none
+   10574:	54001580 	b.eq	10824 <win>  // b.none
    10578:	f82f6a64 	str	x4, [x19, x15]
    1057c:	17ffff18 	b	101dc <continuePlaying>
 
@@ -17043,52 +17043,54 @@ Disassembly of section .text:
    107a0:	8b0f016b 	add	x11, x11, x15
    107a4:	8b0f016b 	add	x11, x11, x15
    107a8:	f9001e6b 	str	x11, [x19, #56]
-   107ac:	d104816b 	sub	x11, x11, #0x120
+   107ac:	d104016b 	sub	x11, x11, #0x100
    107b0:	d298000f 	mov	x15, #0xc000                	// #49152
    107b4:	8b0f01ef 	add	x15, x15, x15
    107b8:	8b0f01ef 	add	x15, x15, x15
    107bc:	cb0f016b 	sub	x11, x11, x15
-   107c0:	f900226b 	str	x11, [x19, #64]
-   107c4:	f9400a6b 	ldr	x11, [x19, #16]
-   107c8:	f900266b 	str	x11, [x19, #72]
-   107cc:	d298000f 	mov	x15, #0xc000                	// #49152
-   107d0:	8b0f016b 	add	x11, x11, x15
-   107d4:	d104816b 	sub	x11, x11, #0x120
-   107d8:	f9002a6b 	str	x11, [x19, #80]
-   107dc:	d298000f 	mov	x15, #0xc000                	// #49152
-   107e0:	d37ff9ef 	lsl	x15, x15, #1
-   107e4:	cb0f016b 	sub	x11, x11, x15
-   107e8:	f9003e6b 	str	x11, [x19, #120]
-   107ec:	f9400e6b 	ldr	x11, [x19, #24]
-   107f0:	f900426b 	str	x11, [x19, #128]
-   107f4:	f940126b 	ldr	x11, [x19, #32]
-   107f8:	f900466b 	str	x11, [x19, #136]
-   107fc:	f940166b 	ldr	x11, [x19, #40]
-   10800:	f9004a6b 	str	x11, [x19, #144]
-   10804:	f9401a6b 	ldr	x11, [x19, #48]
-   10808:	f9004e6b 	str	x11, [x19, #152]
-   1080c:	d61f0380 	br	x28
+   107c0:	9110016b 	add	x11, x11, #0x400
+   107c4:	f900226b 	str	x11, [x19, #64]
+   107c8:	f9400a6b 	ldr	x11, [x19, #16]
+   107cc:	f900266b 	str	x11, [x19, #72]
+   107d0:	d298000f 	mov	x15, #0xc000                	// #49152
+   107d4:	8b0f016b 	add	x11, x11, x15
+   107d8:	d104816b 	sub	x11, x11, #0x120
+   107dc:	f9002a6b 	str	x11, [x19, #80]
+   107e0:	d298000f 	mov	x15, #0xc000                	// #49152
+   107e4:	d37ff9ef 	lsl	x15, x15, #1
+   107e8:	cb0f016b 	sub	x11, x11, x15
+   107ec:	f9003e6b 	str	x11, [x19, #120]
+   107f0:	f9400e6b 	ldr	x11, [x19, #24]
+   107f4:	f900426b 	str	x11, [x19, #128]
+   107f8:	f940126b 	ldr	x11, [x19, #32]
+   107fc:	f900466b 	str	x11, [x19, #136]
+   10800:	f940166b 	ldr	x11, [x19, #40]
+   10804:	f9004a6b 	str	x11, [x19, #144]
+   10808:	f9401a6b 	ldr	x11, [x19, #48]
+   1080c:	f9004e6b 	str	x11, [x19, #152]
+   10810:	d61f0380 	br	x28
 
-0000000000010810 <delay>:
-   10810:	d2a00215 	mov	x21, #0x100000              	// #1048576
+0000000000010814 <delay>:
+   10814:	d2a00215 	mov	x21, #0x100000              	// #1048576
 
-0000000000010814 <delay1>:
-   10814:	d10006b5 	sub	x21, x21, #0x1
-   10818:	b5fffff5 	cbnz	x21, 10814 <delay1>
-   1081c:	d65f03c0 	ret
+0000000000010818 <delay1>:
+   10818:	d10006b5 	sub	x21, x21, #0x1
+   1081c:	b5fffff5 	cbnz	x21, 10818 <delay1>
+   10820:	d65f03c0 	ret
 
-0000000000010820 <win>:
-   10820:	97fffe40 	bl	10120 <greenOn>
-   10824:	17ffffff 	b	10820 <win>
+0000000000010824 <win>:
+   10824:	97fffe3f 	bl	10120 <greenOn>
+   10828:	17ffffff 	b	10824 <win>
 
-0000000000010828 <endGame>:
-   10828:	97fffe38 	bl	10108 <redOn>
-   1082c:	17ffffff 	b	10828 <endGame>
-   10830:	00010088 	.inst	0x00010088 ; undefined
+000000000001082c <endGame>:
+   1082c:	97fffe37 	bl	10108 <redOn>
+   10830:	17ffffff 	b	1082c <endGame>
    10834:	00000000 	udf	#0
+   10838:	00010088 	.inst	0x00010088 ; undefined
+   1083c:	00000000 	udf	#0
 
 Disassembly of section .data:
 
-0000000000010838 <_stack_ptr>:
-   10838:	00400000 	.inst	0x00400000 ; undefined
-   1083c:	00000000 	udf	#0
+0000000000010840 <_stack_ptr>:
+   10840:	00400000 	.inst	0x00400000 ; undefined
+   10844:	00000000 	udf	#0

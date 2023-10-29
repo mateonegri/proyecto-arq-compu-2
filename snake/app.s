@@ -383,7 +383,7 @@ continuar:
     
     fix:
         add x16, x16, 32
-        ret
+        b fixCont
 
     fixAdd:
         add x16, x16, 32
@@ -424,7 +424,7 @@ finishPaint:
     br x28
 
 fixPaint:
-    add x16, x16, 8
+    add x16, x16, 32
     b returnPaint
 
 checkAppleCollision:
@@ -711,11 +711,12 @@ inicializarManzanas:
     add x11, x11, x15
     add x11, x11, x15
     str x11, [x19, #56]  // 6
-    sub x11, x11, 288
+    sub x11, x11, 256
     mov x15, 49152
     add x15, x15, x15
     add x15, x15, x15
     sub x11, x11, x15
+    add x11, x11, 1024
     str x11, [x19, #64] // 7
     ldr x11, [x19, #16]
     str x11, [x19, #72] // 8
