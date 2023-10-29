@@ -20,28 +20,28 @@ inputRead:
 redOff:
   mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.	
 
-  mov w22,#0b1000
+  mov w22, #0b1000
   str w22,[x20,GPIO_GPSET0]
   br x30
 
 redOn:
   mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.	
 
-  mov w22,#0b1000
+  mov w22, #0b1000
   str w22,[x20,GPIO_GPCLR0]
   br x30
 
 greenOff:
   mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.	
 
-  mov w22,#0b0100
+  mov w22, #0b0100
   str w22,[x20,GPIO_GPSET0]
   br x30
 
 greenOn:
   mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.	
 
-  mov w22,#0b0100
+  mov w22, #0b0100
   str w22,[x20,GPIO_GPCLR0]
   br x30
 

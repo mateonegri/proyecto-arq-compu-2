@@ -281,8 +281,6 @@ derecha:
 
 test:
 
-    mov w3, 0x001F
-
 	add x10, x0, 0		// X10 contiene la dirección base del framebuffer
 	mov x22,512         	// Tamaño en Y
 loop6:
@@ -295,7 +293,7 @@ loop10:
 	sub x22,x22,1	   		// Decrementar el contador Y
 	cbnz x22,loop6	  	// Si no es la última fila, saltar
 
-    b endGame
+    ret
 
 desplazarPosicion:
 
@@ -757,16 +755,30 @@ delay1:
     ret
 
 win:
+    mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.		
+    mov x21, #0b0001000000
+    str w21,[x20] // (direccion base)
+    // bl redOff
 
-    bl greenOn
-    b win
+    mov w3, 0x07E0
+    bl test // Si gano pinto la pantalla de verde
+    b infiniteLoop
     
     // Prender led verdes y terminar juego
 
 endGame:
-    bl redOn
-    b endGame
+    mov w20, PERIPHERAL_BASE + GPIO_BASE     // Dirección de los GPIO.		
+    mov x21, #0b1000000000
+    str w21,[x20] // (direccion base)
+    // bl greenOff
+
+    mov w3, 0xF800
+    bl test  // Si perdio pinto la pantalla de rojo
+    b infiniteLoop
 
     // Prender los led rojos y terminar el juego
+
+infiniteLoop:  
+    b infiniteLoop
 
 
