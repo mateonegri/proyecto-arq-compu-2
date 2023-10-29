@@ -74,11 +74,6 @@ loopGame:
 
     bl actualizarDireccion
 
-    mov w3, 0x001F
-
-    cmp x4, 1
-    beq test
-
     mov x15, x2
     lsl x15, x15, 3
     sub x15, x15, 8
@@ -92,22 +87,12 @@ loopGame:
     bl checkBodyCollision
 
     cmp x21, 1
-    // beq endGame
-    beq test
+    beq endGame
 
     bl checkBorderCollision
 
     cmp x21, 1
-    // beq endGame
-
-    mov w3, 0xF800
-
-    beq test
-    
-    bl checkAppleCollision
-
-    cmp x21, 1
-    beq extendSnake
+    beq endGame
 
     bl checkAppleCollision
 
