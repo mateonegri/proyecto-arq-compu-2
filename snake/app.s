@@ -27,6 +27,9 @@ app:
 	mov x21, #0x240
     str w21,[x20] // (direccion base)
 
+    bl redOff
+    bl greenOff
+
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
 	
