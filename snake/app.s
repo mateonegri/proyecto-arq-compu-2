@@ -61,10 +61,9 @@ app:
     add x11, x13, 0
     add x11, x11, 576
 
-    // ldr x4, =MANZANA_START
-    // str x11, [x4]
+    str x11, [x19, #16]
 
-    add x4, x11, 0
+    bl inicializarManzanas
 
     bl dibujarManzana
 
@@ -74,17 +73,6 @@ loopGame:
 
     bl actualizarDireccion
 
-    mov w3, 0x001F
-
-    cmp x4, 1
-    beq test
-
-    mov x15, x2
-    lsl x15, x15, 3
-    sub x15, x15, 8
-
-    ldr x8, [x19, x15]  // Traigo el valor de la cola
-
     bl desplazarPosicion
 
     mov x21, 0
@@ -92,36 +80,25 @@ loopGame:
     bl checkBodyCollision
 
     cmp x21, 1
-    // beq endGame
-    beq test
+    beq endGame
 
     bl checkBorderCollision
 
     cmp x21, 1
-    // beq endGame
-
-    mov w3, 0xF800
-
-    beq test
+    beq endGame
     
     bl checkAppleCollision
 
     cmp x21, 1
     beq extendSnake
 
+continuePlaying:
+
     bl delay
 
     bl pintarTablero
 
     bl pintarSerpiente
-
-    mov x22, 16
-    mov x21, 16
-    lsl x22, x22, 9
-    add x13, x22, x21
-    lsl x13, x13, 1
-    add x13, x13, x10 // En x13 tengo la direccion de inicio del framebuffer para el primer cuadrado
-    add x11, x13, 0
 
     bl dibujarManzana
 
@@ -324,14 +301,11 @@ desplazarPosicion:
     lsl x16, x16, 3
     sub x16, x16, 8 // x16 = Longitud*8 - 8
 
+    ldr x4, [x19, x16] // Guardo en x4 el valor de cola antes de cambiar, por si despues entra en el extend snake
+
     for:
     cmp x15, 0 // para comparar i con la pos base del array (CABEZA)
     beq forCont
-
-    mov w3, 0x07E0
-
-    cmp x2, 3
-    beq test
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
     sub x16, x16, 8 // Le resto 8 a x16 para tener la pos [i - 1]
@@ -339,9 +313,6 @@ desplazarPosicion:
     add x16, x16, 8 // Le sumo 8 para volver al offset de la pos i
     str x13, [x19, x16] // snake_posiciones[i] = snake_posiciones[i-1]
     sub x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
-
-    cmp x2, 3
-    beq test
 
     sub x15, x15, 1
 
@@ -416,10 +387,9 @@ checkAppleCollision:
     mov x28, x30  
     ldr x17, [x19]  // Traigo la cabeza de la serpiente
     mov x15, x2
-    sub x15, x15, 1
     lsl x15, x15, 3
-    // ldr x9, [x4] 
-    cmp x17, x4  // Comparo la cabeza con la manzana
+    ldr x9, [x19, x15] // Traigo la manzana
+    cmp x17, x9  // Comparo la cabeza con la manzana
     beq collisionDetected5  // Si son iguales, colision
     mov x21, 0  
     b return2
@@ -434,24 +404,19 @@ return2:
 
 extendSnake:
 
-    mov x28, x30
-
+    add x2, x2, 1  // Aumento la longitud de la serpiente en 1
     mov x15, x2    // x15 = longitud de la serpeinte
     lsl x15, x15, 3 // x15 * 8
     sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
 
-    add x2, x2, 1  // Aumento la longitud de la serpiente en 1
-
     cmp x2, 15
     beq win
 
-    add x15, x15, 8  // La nueva posicion es igual a la vieja cola
+    // Yo se que en x4 siempre voy tener el valor de cola antes de desplazarPosicion, me aseguro de que la nuevos pos no pise otra pos.
 
-    str x8, [x19, x15] // Cargo la nueva posicion al array
-    
-    mov x4, 1
+    str x4, [x19, x15] // Cargo la nueva posicion al array
 
-    br x28
+    b continuePlaying
 
 checkBodyCollision:
 
@@ -610,7 +575,43 @@ dibujarManzana:
     mov x28, x30
 
     mov w3, 0xF800
+    mov x15, x2
+    lsl x15, x15, 3
+    ldr x11, [x19, x15]
     bl rectangulo
+
+    br x28
+
+inicializarManzanas:
+    mov x28, x30
+
+    add x11, x11, 49152
+    str x11, [x19, #24]
+    sub x11, x11, 288
+    mov x15, 147456
+    sub x11, x11, x15
+    str x11, [x19, #32]
+    add x11, x11, 480
+    sub x11, x11, 49512
+    str x11, [x19, #40]
+    mov x15, 294912
+    add x11, x11, x15
+    str x11, [x19, #48]
+    sub x11, x11, 384
+    sub x11, x11, 49512
+    str x11, [x19, #56]
+    sub x11, x11, 288
+    mov x15, 148536
+    sub x11, x11, x15
+    str x11, [x19, #64]
+    ldr x11, [x19, #24]
+    str x11, [x19, #72]
+    add x11, x11, 49512
+    sub x11, x11, 288
+    str x11, [x19, #80]
+    mov x15, 148536
+    sub x11, x11, x15
+    str x11, [x19, #88]
 
     br x28
 
