@@ -24,7 +24,7 @@ app:
 
 
   	// Configuro GPIO 2 y 3 como Output (001 6-8 y 9-11)
-	mov x21,#0x240
+	mov x21, #0x240
     str w21,[x20, GPIO_GPFSEL1] // (direccion base)
 
     
@@ -99,6 +99,9 @@ continuePlaying:
     bl pintarTablero
 
     bl pintarSerpiente
+
+    cmp x2, 15
+    beq win
 
     bl dibujarManzana
 
@@ -479,8 +482,6 @@ extendSnake:
     cmp x15, 120
     beq arreglar88
 contExtendSnake:
-    cmp x2, 15
-    beq win
 
     // Yo se que en x4 siempre voy tener el valor de cola antes de desplazarPosicion, me aseguro de que la nuevos pos no pise otra pos.
 
