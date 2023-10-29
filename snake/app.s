@@ -25,7 +25,7 @@ app:
 
   	// Configuro GPIO 2 y 3 como Output (001 6-8 y 9-11)
 	mov x21, #0x240
-    str w21,[x20, GPIO_GPFSEL1] // (direccion base)
+    str w21,[x20] // (direccion base)
 
     
     // X0 contiene la dirección base del framebuffer (NO MODIFICAR)
