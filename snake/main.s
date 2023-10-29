@@ -118,5 +118,6 @@ ARRAY_START:
 	.word 0
 	.word 0
 	.word 0
+	.word 0
 
 

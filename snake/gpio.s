@@ -15,7 +15,7 @@ inputRead:
 	and x3,x22,0x20000
 	and x22,x22,0x04000
 
-    br x30 		//Vuelvo a la instruccion link
+  br x30 		//Vuelvo a la instruccion link
 
 redOff:
   mov w20,#0b1000

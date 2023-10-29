@@ -301,6 +301,19 @@ desplazarPosicion:
     lsl x16, x16, 3
     sub x16, x16, 8 // x16 = Longitud*8 - 8
 
+    cmp x16, 88
+    beq fix
+    cmp x16, 96
+    beq fix
+    cmp x16, 104
+    beq fix
+    cmp x16, 112
+    beq fix
+    cmp x16, 120
+    beq fix
+
+fixCont:
+
     ldr x4, [x19, x16] // Guardo en x4 el valor de cola antes de cambiar, por si despues entra en el extend snake
 
     for:
@@ -309,10 +322,19 @@ desplazarPosicion:
 
     // hace lo que esta dentro del for snake_posiciones[i] = snake_posiciones[i-1];
     sub x16, x16, 8 // Le resto 8 a x16 para tener la pos [i - 1]
+    cmp x16, 112
+    beq fixSub1
+contFS1:
     ldr x13, [x19, x16] // x13 = snake_posiciones[i-1]
     add x16, x16, 8 // Le sumo 8 para volver al offset de la pos i
+    cmp x16, 88
+    beq fixAdd
+contFA:
     str x13, [x19, x16] // snake_posiciones[i] = snake_posiciones[i-1]
     sub x16, x16, 8 // Le resto 8 para pasar al offset de la pos siguiente
+    cmp x16, 112
+    beq fixSub2
+contFS2:
 
     sub x15, x15, 1
 
@@ -358,6 +380,22 @@ continuar:
         add x1, x1, x21  // Muevo la pos de la cabeza para abajo y la guardo en el array
         str x1, [x19]
         b continuar
+    
+    fix:
+        add x16, x16, 32
+        ret
+
+    fixAdd:
+        add x16, x16, 32
+        b contFA
+
+    fixSub1:    
+        sub x16, x16, 32
+        b contFS1
+
+    fixSub2: 
+        sub x16, x16, 32
+        b contFS2
 
 
 pintarSerpiente:
@@ -374,6 +412,9 @@ paintLoop:
     ldr x11, [x19, x16]
     bl rectangulo
     add x16, x16, 8
+    cmp x16, 88
+    beq fixPaint
+returnPaint:
     sub x15, x15, 1
 
     b paintLoop
@@ -382,12 +423,27 @@ finishPaint:
 
     br x28
 
+fixPaint:
+    add x16, x16, 8
+    b returnPaint
+
 checkAppleCollision:
 
     mov x28, x30  
     ldr x17, [x19]  // Traigo la cabeza de la serpiente
     mov x15, x2
     lsl x15, x15, 3
+    cmp x15, 88
+    beq fixApple
+    cmp x15, 96
+    beq fixApple
+    cmp x15, 104
+    beq fixApple
+    cmp x15, 112
+    beq fixApple
+    cmp x15, 120
+    beq fixApple
+fixAppleDone:
     ldr x9, [x19, x15] // Traigo la manzana
     cmp x17, x9  // Comparo la cabeza con la manzana
     beq collisionDetected5  // Si son iguales, colision
@@ -402,13 +458,27 @@ return2:
 
     br x28  
 
+fixApple:
+    add x15, x15, 32
+    b fixAppleDone
+
 extendSnake:
 
     add x2, x2, 1  // Aumento la longitud de la serpiente en 1
     mov x15, x2    // x15 = longitud de la serpeinte
     lsl x15, x15, 3 // x15 * 8
     sub x15, x15, 8 // X15 - 8 = posiciones-1 --> porque tengo q tener en cuenta que la cabeza esta en la pos0
-
+    cmp x15, 88
+    beq arreglar88
+    cmp x15, 96
+    beq arreglar88
+    cmp x15, 104
+    beq arreglar88
+    cmp x15, 112
+    beq arreglar88
+    cmp x15, 120
+    beq arreglar88
+contExtendSnake:
     cmp x2, 15
     beq win
 
@@ -418,24 +488,39 @@ extendSnake:
 
     b continuePlaying
 
+arreglar88:
+    add x15, x15, 32
+    b contExtendSnake
+
 checkBodyCollision:
 
     mov x28, x30
-    mov x15, x2  // Load the length of the snake
-    cmp x15, 2  // If the snake length is 0, no collision
+    mov x15, x2  
+    cmp x15, 2  
     beq noCollision
     sub x15, x15, 1
-    ldr x16, [x19]  // Load the current position of the snake's head
+    ldr x16, [x19]  
 
     mov x22, 8
 
 checkLoop:
 
-    ldr x17, [x19, x22]  // Load a body segment's position
-    cmp x17, x16  // Compare it with the head position
-    beq collisionDetected  // If they are the same, a collision occurred
-    add x22, x22, 8  // Move to the next body segment
-    subs x15, x15, 1  // Decrement the counter
+    ldr x17, [x19, x22]  // Cargar cuerpo
+    cmp x17, x16  // Comparo con la cabeza
+    beq collisionDetected  // = ,  colision
+    add x22, x22, 8  // Me muevo al siguiente segmento
+    cmp x22, 88
+    beq fix88
+    cmp x22, 96
+    beq fix88
+    cmp x22, 104
+    beq fix88
+    cmp x22, 112
+    beq fix88
+    cmp x22, 120
+    beq fix88
+contFix88:
+    subs x15, x15, 1  
     bne checkLoop
 
 noCollision:
@@ -450,6 +535,10 @@ collisionDetected:
 return3:
 
     br x28
+
+fix88:
+    add x22, x22, 32
+    b contFix88
 
 checkBorderCollision:
 
@@ -577,41 +666,80 @@ dibujarManzana:
     mov w3, 0xF800
     mov x15, x2
     lsl x15, x15, 3
+    cmp x15, 88
+    beq fixManzana
+    cmp x15, 96
+    beq fixManzana
+    cmp x15, 104
+    beq fixManzana
+    cmp x15, 112
+    beq fixManzana
+    cmp x15, 120
+    beq fixManzana
+
+returnManzana:
     ldr x11, [x19, x15]
     bl rectangulo
 
     br x28
 
+fixManzana:
+    add x15, x15, 32
+    b returnManzana
+
 inicializarManzanas:
     mov x28, x30
 
     add x11, x11, 49152
-    str x11, [x19, #24]
+    str x11, [x19, #24]  // 2
     sub x11, x11, 288
-    mov x15, 147456
+    mov x15, 49152
+    lsl x15, x15, 1
+    add x15, x15, x15
     sub x11, x11, x15
-    str x11, [x19, #32]
-    add x11, x11, 480
-    sub x11, x11, 49512
-    str x11, [x19, #40]
-    mov x15, 294912
+    str x11, [x19, #32] // 3
+    add x11, x11, 192
+    mov x15, 49536
+    sub x11, x11, x15
+    str x11, [x19, #40] // 4
+    mov x15, 49152
+    add x15, x15, x15
     add x11, x11, x15
-    str x11, [x19, #48]
-    sub x11, x11, 384
-    sub x11, x11, 49512
-    str x11, [x19, #56]
+    str x11, [x19, #48] // 5
+    mov x15, 49152
+    add x11, x11, x15
+    add x11, x11, x15
+    add x11, x11, x15
+    str x11, [x19, #56]  // 6
     sub x11, x11, 288
-    mov x15, 148536
+    mov x15, 49152
+    add x15, x15, x15
+    add x15, x15, x15
     sub x11, x11, x15
-    str x11, [x19, #64]
+    str x11, [x19, #64] // 7
+    ldr x11, [x19, #16]
+    str x11, [x19, #72] // 8
+    mov x15, 49152
+    add x11, x11, x15
+    sub x11, x11, 288
+    str x11, [x19, #80] // 9
+    mov x15, 49152
+    lsl x15, x15, 1
+    sub x11, x11, x15
+    // str x11, [x19, #88]  Debe pisar alguna direccin de los GPIO porque me rompe el inputRead
+    // str x11, [x19, #96] 
+    // str x11, [x19, #104]
+    // str x11, [x19, #112]
+    str x11, [x19, #120] // 10
     ldr x11, [x19, #24]
-    str x11, [x19, #72]
-    add x11, x11, 49512
-    sub x11, x11, 288
-    str x11, [x19, #80]
-    mov x15, 148536
-    sub x11, x11, x15
-    str x11, [x19, #88]
+    str x11, [x19, #128] // 11
+    ldr x11, [x19, #32]
+    str x11, [x19, #136] // 12
+    ldr x11, [x19, #40]
+    str x11, [x19, #144] // 13
+    ldr x11, [x19, #48]
+    str x11, [x19, #152] // 14
+
 
     br x28
 
