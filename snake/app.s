@@ -681,7 +681,8 @@ dibujarManzana:
 
 returnManzana:
     ldr x11, [x19, x15]
-    bl rectangulo
+    // bl rectangulo
+    bl paintManzana
 
     br x28
 
@@ -782,3 +783,103 @@ infiniteLoop:
     b infiniteLoop
 
 
+paintManzana:
+    add x28, x12, xzr //x28 tiene cuanto atras tiene q volver para ir a sig fila 
+    add x11, x11, 42 // le sume a x11 10 pq quiero q arranque 21 pos mas a la derecha, es decir 21*2 pixeles 
+    // vamos a tener dos aux q ponen el tamaño de y y x segun en q fila del diamante estamos 
+    mov x25, xzr // flag 
+    mov x27, xzr // flag 
+    mov x23, 6 
+    mov x22, 6   // Tamaño en Y 
+dibujarejeY:
+    add X21, x23, xzr  // Tamaño en X
+dibujarejeX:
+
+    // en vez de decrementar el tam en x e y vamos a tener 2 auxiliares en x23 y x24 
+    sturh w3,[x11]	   	// Setear el color del pixel N
+    add x11,x11,2	   	// Siguiente pixel
+    sub x21,x21,1	   		// Decrementar el contador X
+    cbnz x21,dibujarejeX	   	// Si no terminó la fila, saltar 
+    // ahora ya termino la fila --> tiene q hacerlo en y 6 veces 
+    sub x11, x11, x28    // Regresar x11 al inicio de la fila, recordemos q tiene 6 pixeles q mide 2 cada uno 
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    sub x22,x22,1	   		// Decrementar el contador Y
+	cbnz x22,dibujarejeY	  	// Si no es la última fila, saltar
+   
+    sub 26, x27, 4 
+    cbz x26, finpintarmanzana // quiere decir q ya pinto la ultima, sino sigue 
+
+    sub x26, x25, 2 
+    cbz x26, fila3 // quiere decir q ya paso por esto 
+    sub x26, x25, 3 
+    cbz x26, fila4 // quiere decir ya paso por fila3 
+    sub x26, x25, 4
+    cbz x26, fila3d
+    sub x26, x25, 5 
+    cbz x26, fila2d
+    sub x26, x25, 6 
+    cbz x26, fila1d
+
+    fila2:
+
+    // se supone q ya pinto primer cuadradito, en la sig fila tiene q pintar 3 de estos --> en x aumentamos el contador por 3 y en y queda igual
+    mov X23, 18 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 24    // Regresar x11 dos cuadraditos + atras (cada cuadrado 12 pix)
+    add x28, xzr, 24
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    // tengo q dejarle saber q ya ice esta fila --> flag 
+    mov x25, 2 
+    b dibujarejeY
+
+    fila3: 
+    mov x23, 30 
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 48 
+    mov x28, xzr, 48
+    add x11, x11, 1024 
+    mov x25, 3
+    b dibujarejeY
+
+
+    fila4: 
+    mov X23, 48 // Tamaño en X --> voy a pintar toda esta fila 
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 72    // Regresar al principio de la fila (21*2 + 18*2)
+    add x28, xzr, 72
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    // despues de este tiene q hacer nuevamente la fila 2 
+    mov x25, 4 // entonces va a entrar a fila 3 --> no da cero 
+    // mov x27, 1 // otra flag para indicar q ya paso por aca 
+    b dibujarejeY
+
+
+    fila3d: 
+    mov x23, 30 
+    mov x22, 6   // Tamaño en Y 
+    sub x11, x11, 72 
+    add x28, xzr, 72 
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x25, 5
+    b dibujarejeY
+
+    fila2d:
+    mov X23, 18 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 48
+    add x28, xzr, 48
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x25, 6
+    b dibujarejeY
+
+    fila1d: 
+    mov X23, 6 // Tamaño en X
+    mov x22, 6   // Tamaño en Y
+    sub x11, x11, 24 // me voy dos cuadrados atras
+    add x28, xzr, 24
+    add x11, x11, 1024  // Avanzar a la siguiente fila
+    mov x27, 4 // para saber q ya termine de pintar la manzana 
+    b dibujarejeY
+
+    finpintarmanzana:
+    ret
