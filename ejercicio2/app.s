@@ -681,10 +681,8 @@ dibujarManzana:
 
 returnManzana:
     ldr x11, [x19, x15]
-    bl rectangulo
-    
-
-endPaintManzana:
+    // bl rectangulo
+    bl drawCircle
 
     br x28
 
@@ -748,6 +746,54 @@ inicializarManzanas:
 
 
     br x28
+
+drawCircle:
+
+    mov w3, 0xF800
+
+    add x13, x11, 0
+    add x13, x13, 24576 // Bajo hasta la mitad de cuadrado
+
+    mov x15, 0 // Contador
+    mov x21, 48
+    mov x23, 23 // Lo uso como comparador
+    mov x22, 48
+    mov x24, 0 // Flag para saber si bajo o subo
+    drawLine:
+        sturh w3, [x13]
+        add x13, x13, 2
+        sub x22, x22, 1
+        cbnz x22, drawLine
+        sub x11, x11, 96 // Vuelvo al inicio
+        cmp x24, 1
+        beq goDown
+        sub x11, x11, 1024 // Voy hacia atras una fila (hacia arriba)
+    continueAfterGoDown:
+        add x11, x11, 4 // Voy dos pixeles hacia adelante
+        add x15, x15, 2 // Por cada pasada le tengo que restar 2 al contador
+        mov x22, 48
+        sub x22, x22, x15
+        sub x21, x21, 1
+        cmp x21, x23
+        beq setFlag
+        cbz x21, endDrawCircle
+    continueCircle:
+        b drawLine
+
+    endDrawCircle:
+
+	br x30
+
+setFlag:
+    mov x24, 1
+    add x13, x11, 0
+    add x13, x13, 24576 // Bajo hasta la mitad de cuadrado
+    mov x15, 0
+    b continueCircle
+
+goDown:
+    add x11, x11, 1024 // Voy hacia atras una fila (hacia arriba)
+    b continueAfterGoDown
 
 delay:
 	movz x21, 0x10, lsl #16
